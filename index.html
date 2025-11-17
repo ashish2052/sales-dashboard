@@ -148,7 +148,6 @@ thead {
   border: 1px solid #1a2f63;
   box-shadow: 0 0 25px #002a80 inset;
 }
-
 </style>
 </head>
 
@@ -190,7 +189,7 @@ thead {
 
         <div class="kpi" data-kpi="accepted">
           <div class="kpi-title">Accepted</div>
-          <div class="kpi-number" id="k_accepted">0</div>
+          <div classkpi-number" id="k_accepted">0</div>
         </div>
 
         <div class="kpi" data-kpi="reverted">
@@ -204,7 +203,7 @@ thead {
         </div>
 
         <div class="kpi" data-kpi="coe">
-          <div class="kpi-title">COEs</div>
+          <div class="kpi-title">COE</div>
           <div class="kpi-number" id="k_coe">0</div>
         </div>
       </div>
@@ -242,6 +241,7 @@ let ROWS = [];
 let RANGE = "all";
 let CUSTOM = null;
 
+// HELPERS
 const toDate = v => v ? new Date(v) : null;
 
 // LOAD API
@@ -268,30 +268,30 @@ async function loadAPI() {
   buildSales();
 }
 
-// DATE RANGE FILTER
+// DATE FILTER
 function inRange(d, today) {
   if (!d) return false;
 
   if (CUSTOM) {
-    const f = new Date(CUSTOM[0]);
-    const t = new Date(CUSTOM[1]);
-    return d >= f && d <= t;
+    const from = new Date(CUSTOM[0]);
+    const to = new Date(CUSTOM[1]);
+    return d >= from && d <= to;
   }
 
   if (RANGE === "all") return true;
 
   const days = Number(RANGE);
-  const s = new Date(today);
-  s.setDate(s.getDate() - days);
-  return d >= s && d <= today;
+  const start = new Date(today);
+  start.setDate(start.getDate() - days);
+  return d >= start && d <= today;
 }
 
-// BUILD SALES
+// BUILD SALES DASHBOARD
 function buildSales() {
   const today = new Date();
 
   const assigned = ROWS.filter(r => r.assigned && inRange(r.assigned, today));
-  const reverted = ROWS.filter(r => r.assigned && r.transferred == null && r.coe == null && inRange(r.assigned, today));
+  const reverted = ROWS.filter(r => r.assigned && !r.transferred && !r.coe && inRange(r.assigned, today));
   const accepted = assigned.length - reverted.length;
   const transferred = ROWS.filter(r => r.transferred && inRange(r.transferred, today));
   const coe = ROWS.filter(r => r.coe && inRange(r.coe, today));
@@ -303,7 +303,7 @@ function buildSales() {
   document.getElementById("k_coe").textContent = coe.length;
 
   buildChart(assigned);
-  attachCardClicks({assigned, acceptedRows: assigned.filter(r=>!r.reverted), reverted, transferred, coe});
+  setupCardClicks({assigned, accepted, reverted, transferred, coe});
 }
 
 // CHART
@@ -337,15 +337,15 @@ function buildChart(data) {
   });
 }
 
-// CLICK → DETAILS
-function attachCardClicks(obj) {
+// ============= FIXED CARD CLICK HANDLER =============
+function setupCardClicks(obj) {
   document.querySelectorAll(".kpi").forEach(k => {
     k.onclick = () => {
       const type = k.dataset.kpi;
       let rows = [];
 
       if (type === "assigned") rows = obj.assigned;
-      if (type === "accepted") rows = obj.acceptedRows;
+      if (type === "accepted") rows = obj.assigned.filter(r => r.transferred || r.coe);
       if (type === "reverted") rows = obj.reverted;
       if (type === "transferred") rows = obj.transferred;
       if (type === "coe") rows = obj.coe;
@@ -355,38 +355,45 @@ function attachCardClicks(obj) {
   });
 }
 
+// ============= FIXED DETAILS SECTION =============
 function showDetails(rows) {
+  // Switch layout
   document.getElementById("sales-section").style.display = "none";
   document.getElementById("details-section").style.display = "block";
   document.getElementById("title").textContent = "Details";
 
+  // Fill filtered table
   const TB = document.getElementById("detailsBody");
-  TB.innerHTML = rows.map(r => `
-    <tr>
-      <td>${r.salesRep}</td>
-      <td>${r.assigned ? r.assigned.toLocaleDateString("en-GB") : ""}</td>
-      <td>${r.transferred ? r.transferred.toLocaleDateString("en-GB") : ""}</td>
-      <td>${r.coe ? r.coe.toLocaleDateString("en-GB") : ""}</td>
-      <td>${r.gsLead}</td>
-    </tr>
-  `).join("");
+  TB.innerHTML = rows
+    .map(r => `
+      <tr>
+        <td>${r.salesRep}</td>
+        <td>${r.assigned ? r.assigned.toLocaleDateString("en-GB") : ""}</td>
+        <td>${r.transferred ? r.transferred.toLocaleDateString("en-GB") : ""}</td>
+        <td>${r.coe ? r.coe.toLocaleDateString("en-GB") : ""}</td>
+        <td>${r.gsLead}</td>
+      </tr>
+    `)
+    .join("");
 }
 
-// NAV
-document.querySelectorAll(".side-btn").forEach(btn=>{
-  btn.onclick=()=>{
-    document.querySelectorAll(".side-btn").forEach(b=>b.classList.remove("active"));
+// ============= FIXED NAVIGATION =============
+document.querySelectorAll(".side-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".side-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
-    if(btn.dataset.tab==="sales"){
-      document.getElementById("sales-section").style.display="block";
-      document.getElementById("details-section").style.display="none";
-      document.getElementById("title").textContent="Sales Overview";
+    if (btn.dataset.tab === "sales") {
+      document.getElementById("sales-section").style.display = "block";
+      document.getElementById("details-section").style.display = "none";
+      document.getElementById("title").textContent = "Sales Overview";
     }
-    if(btn.dataset.tab==="details"){
-      document.getElementById("sales-section").style.display="none";
-      document.getElementById("details-section").style.display="block";
-      document.getElementById("title").textContent="Details";
+
+    if (btn.dataset.tab === "details") {
+      // Do NOT reset table — showDetails() controls it
+      document.getElementById("sales-section").style.display = "none";
+      document.getElementById("details-section").style.display = "block";
+      document.getElementById("title").textContent = "Details";
     }
   };
 });
