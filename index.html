@@ -1,67 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>Sales & GS Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- Google Font -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<!-- Chart.js -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 :root {
     --bg: #050A1F;
-    --card-bg: #0B1233;
     --text: #E6EEFF;
+    --card-bg: #0B1233;
     --accent: #00C4FF;
     --green: #00ff99;
     --red: #ff4e6a;
     --yellow: #ffdd55;
+
+    --donut1: #00C4FF;
+    --donut2: #00F5D4;
+    --donut3: #7A5CFF;
+    --donut4: #00FFC6;
 }
 
 body {
     margin: 0;
-    font-family: 'Poppins', sans-serif;
     background: var(--bg);
+    font-family: "Poppins", sans-serif;
     color: var(--text);
 }
 
 /* HEADER */
 .header {
+    padding: 20px;
     background: rgba(0,0,0,0.35);
-    padding: 20px 25px;
+    border-bottom: 1px solid #0E1A45;
+    box-shadow: 0 0 20px #003388 inset;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #0E1A45;
-    box-shadow: 0 0 25px #003388 inset;
 }
 
 .header-title {
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 600;
-    letter-spacing: 1px;
     color: #9EC5FF;
     text-shadow: 0 0 12px #007bff;
 }
 
 .live-btn {
-    background: #0aff9d;
     padding: 8px 16px;
+    background: #00ff99;
     border-radius: 8px;
-    color: #052b1a;
     font-weight: 600;
-    font-size: 15px;
-    box-shadow: 0 0 12px #0aff9d;
+    color: #003322;
+    box-shadow: 0 0 10px #00ff99;
 }
 
 /* LAYOUT */
 .container {
     display: flex;
-    height: calc(100vh - 75px);
+    height: calc(100vh - 70px);
 }
 
 /* SIDEBAR */
@@ -74,15 +74,15 @@ body {
 
 .sidebar button {
     width: 90%;
+    padding: 12px;
     margin: 10px auto;
-    padding: 14px;
     background: #0B1233;
     border: none;
     border-radius: 8px;
-    font-size: 15px;
     color: var(--text);
+    font-size: 15px;
     cursor: pointer;
-    text-align: left;
+    display: block;
     transition: 0.2s;
 }
 
@@ -96,27 +96,48 @@ body {
 .content-area {
     flex: 1;
     padding: 25px;
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 /* SUBTABS */
 .subtabs {
-    margin-bottom: 18px;
+    margin-bottom: 15px;
 }
 
 .subtabs button {
-    margin-right: 12px;
-    padding: 10px 16px;
     background: #0B1233;
+    padding: 10px 16px;
+    margin-right: 10px;
     border-radius: 6px;
-    color: var(--text);
     border: none;
+    color: var(--text);
     cursor: pointer;
 }
 
 .subtabs button.active {
     background: #003388;
     box-shadow: 0 0 8px #006eff;
+}
+
+/* SUB-SUB-TABS (for Sales Rep tabs) */
+.reptabs {
+    margin: 20px 0;
+}
+
+.reptabs button {
+    padding: 10px 18px;
+    margin-right: 10px;
+    border-radius: 6px;
+    border: none;
+    background: #0B1233;
+    color: var(--text);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.reptabs button.active {
+    background: #0044dd;
+    box-shadow: 0 0 8px #007bff;
 }
 
 /* CARDS */
@@ -128,10 +149,10 @@ body {
 }
 
 .card {
-    background: var(--card-bg);
-    padding: 18px;
-    border-radius: 12px;
     width: 220px;
+    background: var(--card-bg);
+    padding: 16px;
+    border-radius: 12px;
     box-shadow: 0 0 12px rgba(0,0,0,0.5);
     cursor: pointer;
     transition: 0.25s;
@@ -143,36 +164,41 @@ body {
 }
 
 .card-title {
-    font-size: 15px;
-    opacity: 0.8;
+    font-size: 14px;
+    opacity: 0.7;
 }
 
 .card-value {
     font-size: 28px;
-    font-weight: 600;
     margin-top: 5px;
+    font-weight: 600;
 }
 
-/* CHART GRID FIX — 2 per row */
+/* CHARTS — 3 PER ROW */
 .charts-row {
     width: 100%;
     display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
     gap: 20px;
-    margin-bottom: 30px;
+    flex-wrap: wrap;
 }
 
 .chart-card {
     flex: 1;
-    min-width: 48%;
+    min-width: 30%;
     background: var(--card-bg);
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 0 10px #0b0f2d;
+    margin-bottom: 20px;
 }
 
-/* DETAILS TABLE */
+.chart-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+/* TABLE */
 .table-box {
     background: var(--card-bg);
     padding: 20px;
@@ -184,7 +210,6 @@ body {
     width: 100%;
     border-collapse: collapse;
     color: var(--text);
-    font-size: 14px;
 }
 
 .table-box th, .table-box td {
@@ -193,12 +218,16 @@ body {
 }
 
 .row-alert { background: rgba(255, 0, 0, 0.15); }
-.row-wait { background: rgba(255, 255, 0, 0.1); }
-.row-ok { background: rgba(0, 255, 100, 0.08); }
+.row-wait  { background: rgba(255, 255, 0, 0.1); }
+.row-ok    { background: rgba(0, 255, 100, 0.08); }
 
-/* HIDDEN SECTIONS */
+/* VISIBILITY */
 .section { display: none; }
 .section.active { display: block; }
+.subsection { display: none; }
+.subsection.active { display: block; }
+.repsection { display: none; }
+.repsection.active { display: block; }
 </style>
 </head>
 
@@ -221,7 +250,9 @@ body {
     <!-- CONTENT -->
     <div class="content-area">
 
+        <!-- ============================= -->
         <!-- SALES SECTION -->
+        <!-- ============================= -->
         <div id="sectionSales" class="section active">
 
             <div class="subtabs">
@@ -231,91 +262,103 @@ body {
 
             <!-- SALES OVERVIEW -->
             <div id="salesOverview" class="subsection active">
-
                 <div class="cards-row">
-                    <div class="card" id="cardAssigned">
-                        <div class="card-title">Assigned</div>
-                        <div class="card-value" id="valAssigned">0</div>
-                    </div>
-
-                    <div class="card" id="cardAccepted">
-                        <div class="card-title">Accepted</div>
-                        <div class="card-value" id="valAccepted">0</div>
-                    </div>
-
-                    <div class="card" id="cardReverted">
-                        <div class="card-title">Reverted</div>
-                        <div class="card-value" id="valReverted">0</div>
-                    </div>
-
-                    <div class="card" id="cardGS">
-                        <div class="card-title">Transferred to GS</div>
-                        <div class="card-value" id="valGS">0</div>
-                    </div>
-
-                    <div class="card" id="cardCOE">
-                        <div class="card-title">COE Obtained</div>
-                        <div class="card-value" id="valCOE">0</div>
-                    </div>
+                    <div class="card" id="cardAssigned"><div class="card-title">Assigned</div><div class="card-value" id="valAssigned">0</div></div>
+                    <div class="card" id="cardAccepted"><div class="card-title">Accepted</div><div class="card-value" id="valAccepted">0</div></div>
+                    <div class="card" id="cardReverted"><div class="card-title">Reverted</div><div class="card-value" id="valReverted">0</div></div>
+                    <div class="card" id="cardGS"><div class="card-title">Transferred to GS</div><div class="card-value" id="valGS">0</div></div>
+                    <div class="card" id="cardCOE"><div class="card-title">COE Obtained</div><div class="card-value" id="valCOE">0</div></div>
                 </div>
 
                 <div class="charts-row">
-                    <div class="chart-card">
-                        <canvas id="chartAssignedTrend"></canvas>
-                    </div>
-
-                    <div class="chart-card">
-                        <canvas id="chartAcceptedTrend"></canvas>
-                    </div>
+                    <div class="chart-card"><div class="chart-title">Assigned Trend</div><canvas id="chartAssignedTrend"></canvas></div>
+                    <div class="chart-card"><div class="chart-title">Accepted Trend</div><canvas id="chartAcceptedTrend"></canvas></div>
                 </div>
-
             </div>
 
-            <!-- SALES REP TAB -->
+            <!-- SALES REP SECTION -->
             <div id="salesRepPage" class="subsection">
 
-                <!-- ACTIVE CLIENT CARDS -->
-                <div class="cards-row">
-                    <div class="card">
-                        <div class="card-title">Sweta — Active Clients</div>
-                        <div class="card-value" id="activeSweta">0</div>
+                <div class="reptabs">
+                    <button id="repSweta" class="active">Sweta</button>
+                    <button id="repAnusha">Anusha</button>
+                    <button id="repKumkum">Kumkum</button>
+                </div>
+
+                <!-- SWETA TAB -->
+                <div id="repSwetaTab" class="repsection active">
+
+                    <div class="cards-row">
+                        <div class="card"><div class="card-title">Active Clients</div><div class="card-value" id="activeSweta">0</div></div>
+                        <div class="card"><div class="card-title">Avg Days to Transfer</div><div class="card-value" id="sAvgDays">0</div></div>
+                        <div class="card"><div class="card-title">GS Conversion %</div><div class="card-value" id="sConvGS">0%</div></div>
+                        <div class="card"><div class="card-title">COE Conversion %</div><div class="card-value" id="sConvCOE">0%</div></div>
+                        <div class="card"><div class="card-title">Visa Conversion %</div><div class="card-value" id="sConvVisa">0%</div></div>
                     </div>
-                    <div class="card">
-                        <div class="card-title">Anusha — Active Clients</div>
-                        <div class="card-value" id="activeAnusha">0</div>
+
+                    <div class="charts-row">
+                        <div class="chart-card"><div class="chart-title">Assigned per Month</div><canvas id="swetaAssignedMonthly"></canvas></div>
+                        <div class="chart-card"><div class="chart-title">Transferred per Month</div><canvas id="swetaGSMonthly"></canvas></div>
+                        <div class="chart-card"><div class="chart-title">Accepted per Month</div><canvas id="swetaAcceptedMonthly"></canvas></div>
                     </div>
-                    <div class="card">
-                        <div class="card-title">Kumkum — Active Clients</div>
-                        <div class="card-value" id="activeKumkum">0</div>
+
+                    <div class="charts-row">
+                        <div class="chart-card"><div class="chart-title">Top Sources</div><canvas id="swetaSources"></canvas></div>
+                        <div class="chart-card"><div class="chart-title">Conversion Funnel</div><canvas id="swetaFunnel"></canvas></div>
+                    </div>
+
+                </div>
+
+                <!-- ANUSHA TAB -->
+                <div id="repAnushaTab" class="repsection">
+                    <div class="cards-row">
+                        <div class="card"><div class="card-title">Active Clients</div><div class="card-value" id="activeAnusha">0</div></div>
+                        <div class="card"><div class="card-title">Avg Days to Transfer</div><div class="card-value" id="aAvgDays">0</div></div>
+                        <div class="card"><div class="card-title">GS Conversion %</div><div class="card-value" id="aConvGS">0%</div></div>
+                        <div class="card"><div class="card-title">COE Conversion %</div><div class="card-value" id="aConvCOE">0%</div></div>
+                        <div class="card"><div class="card-title">Visa Conversion %</div><div class="card-value" id="aConvVisa">0%</div></div>
+                    </div>
+
+                    <div class="charts-row">
+                        <div class="chart-card"><div class="chart-title">Assigned per Month</div><canvas id="anushaAssignedMonthly"></canvas></div>
+                        <div class="chart-card"><div class="chart-title">Transferred per Month</div><canvas id="anushaGSMonthly"></canvas></div>
+                        <div class="chart-card"><div class="chart-title">Accepted per Month</div><canvas id="anushaAcceptedMonthly"></canvas></div>
+                    </div>
+
+                    <div class="charts-row">
+                        <div class="chart-card"><div class="chart-title">Top Sources</div><canvas id="anushaSources"></canvas></div>
+                        <div class="chart-card"><div class="chart-title">Conversion Funnel</div><canvas id="anushaFunnel"></canvas></div>
                     </div>
                 </div>
 
-                <!-- REP COMPARISON -->
-                <div class="charts-row">
-                    <div class="chart-card"><canvas id="chartRepAssigned"></canvas></div>
-                    <div class="chart-card"><canvas id="chartRepGS"></canvas></div>
-                </div>
+                <!-- KUMKUM TAB -->
+                <div id="repKumkumTab" class="repsection">
+                    <div class="cards-row">
+                        <div class="card"><div class="card-title">Active Clients</div><div class="card-value" id="activeKumkum">0</div></div>
+                        <div class="card"><div class="card-title">Avg Days to Transfer</div><div class="card-value" id="kAvgDays">0</div></div>
+                        <div class="card"><div class="card-title">GS Conversion %</div><div class="card-value" id="kConvGS">0%</div></div>
+                        <div class="card"><div class="card-title">COE Conversion %</div><div class="card-value" id="kConvCOE">0%</div></div>
+                        <div class="card"><div class="card-title">Visa Conversion %</div><div class="card-value" id="kConvVisa">0%</div></div>
+                    </div>
 
-                <!-- MONTHLY ROWS (6 charts total) -->
-                <div class="charts-row">
-                    <div class="chart-card"><canvas id="swetaAssignedMonthly"></canvas></div>
-                    <div class="chart-card"><canvas id="swetaGSMonthly"></canvas></div>
-                </div>
+                    <div class="charts-row">
+                        <div class="chart-card"><div class="chart-title">Assigned per Month</div><canvas id="kumkumAssignedMonthly"></canvas></div>
+                        <div class="chart-card"><div class="chart-title">Transferred per Month</div><canvas id="kumkumGSMonthly"></canvas></div>
+                        <div class="chart-card"><div class="chart-title">Accepted per Month</div><canvas id="kumkumAcceptedMonthly"></canvas></div>
+                    </div>
 
-                <div class="charts-row">
-                    <div class="chart-card"><canvas id="anushaAssignedMonthly"></canvas></div>
-                    <div class="chart-card"><canvas id="anushaGSMonthly"></canvas></div>
-                </div>
-
-                <div class="charts-row">
-                    <div class="chart-card"><canvas id="kumkumAssignedMonthly"></canvas></div>
-                    <div class="chart-card"><canvas id="kumkumGSMonthly"></canvas></div>
+                    <div class="charts-row">
+                        <div class="chart-card"><div class="chart-title">Top Sources</div><canvas id="kumkumSources"></canvas></div>
+                        <div class="chart-card"><div class="chart-title">Conversion Funnel</div><canvas id="kumkumFunnel"></canvas></div>
+                    </div>
                 </div>
 
             </div>
         </div>
 
-        <!-- GS PERFORMANCE SECTION -->
+        <!-- ============================= -->
+        <!-- GS PERFORMANCE -->
+        <!-- ============================= -->
         <div id="sectionGS" class="section">
 
             <div class="subtabs">
@@ -323,43 +366,29 @@ body {
                 <button id="tabGSAlerts">Alerts</button>
             </div>
 
-            <!-- GS MAIN OVERVIEW -->
+            <!-- GS Overview -->
             <div id="gsOverview" class="subsection active">
 
                 <div class="cards-row">
-                    <div class="card">
-                        <div class="card-title">Total GS Cases</div>
-                        <div class="card-value" id="gsTotal">0</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-title">Pending Full Offer</div>
-                        <div class="card-value" id="gsPendingOffer">0</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-title">Pending COE</div>
-                        <div class="card-value" id="gsPendingCOE">0</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-title">Pending Visa</div>
-                        <div class="card-value" id="gsPendingVisa">0</div>
-                    </div>
+                    <div class="card"><div class="card-title">Total GS Cases</div><div class="card-value" id="gsTotal">0</div></div>
+                    <div class="card"><div class="card-title">Pending Full Offer</div><div class="card-value" id="gsPendingOffer">0</div></div>
+                    <div class="card"><div class="card-title">Pending COE</div><div class="card-value" id="gsPendingCOE">0</div></div>
+                    <div class="card"><div class="card-title">Pending Visa</div><div class="card-value" id="gsPendingVisa">0</div></div>
                 </div>
 
                 <div class="charts-row">
-                    <div class="chart-card"><canvas id="gsTransferTrend"></canvas></div>
-                    <div class="chart-card"><canvas id="avgOfferDays"></canvas></div>
+                    <div class="chart-card"><div class="chart-title">GS Transfers per Month</div><canvas id="gsTransferTrend"></canvas></div>
+                    <div class="chart-card"><div class="chart-title">Avg Days to Full Offer</div><canvas id="avgOfferDays"></canvas></div>
+                    <div class="chart-card"><div class="chart-title">Avg Days to COE</div><canvas id="avgCOEDays"></canvas></div>
                 </div>
 
                 <div class="charts-row">
-                    <div class="chart-card"><canvas id="avgCOEDays"></canvas></div>
-                    <div class="chart-card"><canvas id="avgVisaDays"></canvas></div>
+                    <div class="chart-card"><div class="chart-title">Avg Days to Visa Lodged</div><canvas id="avgVisaDays"></canvas></div>
                 </div>
-
             </div>
 
-            <!-- GS ALERTS -->
+            <!-- GS Alerts -->
             <div id="gsAlerts" class="subsection">
-
                 <div class="table-box">
                     <table id="gsAlertsTable">
                         <thead>
@@ -373,11 +402,13 @@ body {
                         <tbody></tbody>
                     </table>
                 </div>
-
             </div>
+
         </div>
 
+        <!-- ============================= -->
         <!-- DETAILS SECTION -->
+        <!-- ============================= -->
         <div id="sectionDetails" class="section">
             <div class="table-box">
                 <table id="detailsTable">
@@ -408,223 +439,185 @@ body {
 </div>
 
 <script>
-
-// ========== API URL ==========
+    /* ============================================
+   UTILITIES
+============================================ */
 const API_URL = "https://salesdashboard.ashishoct34.workers.dev/";
 
-// Utility
-function id(x){ return document.getElementById(x); }
-function parseDate(d){
-    if(!d) return null;
-    let p = d.split("-");
-    if(p.length < 3) return null;
-    let year = parseInt(p[0]);
-    let month = parseInt(p[1]) - 1;
-    let day = parseInt(p[2]);
-    return new Date(year, month, day);
+function id(x) { return document.getElementById(x); }
+
+function parseDate(v) {
+    if (!v || !v.includes("-")) return null;
+    const p = v.split("-");
+    if (p.length < 3) return null;
+    return new Date(+p[0], +p[1] - 1, +p[2]);
 }
 
-// MAIN LOAD
-let flatList = [];
+function diffDays(d1, d2) {
+    if (!d1 || !d2) return 0;
+    return Math.floor((d1 - d2) / (1000 * 3600 * 24));
+}
 
-async function loadData(){
+let flatList = [];
+let reps = ["Sweta", "Anusha", "Kumkum"];
+
+/* ============================================
+   MAIN LOAD
+============================================ */
+async function loadData() {
     const res = await fetch(API_URL);
     const json = await res.json();
+    const d = json.data;
 
-    const sweta = json.data.Sweta || [];
-    const anusha = json.data.Anusha || [];
-    const kumkum = json.data.Kumkum || [];
+    flatList = [...(d.Sweta || []), ...(d.Anusha || []), ...(d.Kumkum || [])];
 
-    flatList = [
-        ...sweta,
-        ...anusha,
-        ...kumkum
-    ];
-
-    computeSalesOverview(flatList);
-    computeSalesRep(flatList);
-    computeGSOverview(flatList);
-    computeGSAlerts(flatList);
+    computeSalesOverview();
+    computeSalesRep();
+    computeGSOverview();
+    computeGSAlerts();
     renderDetails(flatList);
+
+    console.log("Dashboard Loaded");
 }
 
-/* -------------------------------
-   SALES OVERVIEW METRICS
---------------------------------*/
-function computeSalesOverview(list){
-    let assigned = list.length;
+/* ============================================
+   SALES OVERVIEW
+============================================ */
+function computeSalesOverview() {
+    const total = flatList.length;
+    const reverted = flatList.filter(x => x["reason if reverted"]).length;
+    const accepted = total - reverted;
+    const gs = flatList.filter(x => x["transferred to gs date"]).length;
+    const coe = flatList.filter(x => x["coe obtained date"]).length;
 
-    let reverted = list.filter(x => x["reason if reverted"]).length;
-
-    let accepted = assigned - reverted;
-
-    let gs = list.filter(x => x["transferred to gs date"]).length;
-
-    let coe = list.filter(x => x["coe obtained date"]).length;
-
-    id("valAssigned").textContent = assigned;
+    id("valAssigned").textContent = total;
     id("valAccepted").textContent = accepted;
     id("valReverted").textContent = reverted;
     id("valGS").textContent = gs;
     id("valCOE").textContent = coe;
+
+    drawTrend("chartAssignedTrend", groupMonthly(flatList, "assigned date"));
+    drawTrend("chartAcceptedTrend", groupMonthly(flatList.filter(x => !x["reason if reverted"]), "assigned date"));
 }
 
-/* -------------------------------
-    SALES REP LOGIC (Active + Monthly)
---------------------------------*/
-function computeSalesRep(list){
+/* ============================================
+   SALES REP SECTION
+============================================ */
+function computeSalesRep() {
 
-    function activeCount(rep){
-        return list.filter(x =>
-            x["assignee"] &&
-            x["assignee"].toLowerCase().includes(rep.toLowerCase()) &&
+    reps.forEach(rep => {
+        const list = flatList.filter(x => x.assignee?.toLowerCase().includes(rep.toLowerCase()));
+
+        /* ACTIVE CLIENTS */
+        const active = list.filter(x =>
             !x["reason if reverted"] &&
             !x["transferred to gs date"]
         ).length;
-    }
 
-    id("activeSweta").textContent = activeCount("sweta");
-    id("activeAnusha").textContent = activeCount("anusha");
-    id("activeKumkum").textContent = activeCount("kumkum");
+        id(`active${rep}`).textContent = active;
 
-    // Monthly grouping
-    function groupByMonth(arr, field){
-        let map = {};
-        arr.forEach(x=>{
-            let d = parseDate(x[field]);
-            if(!d) return;
-            let key = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
-            if(!map[key]) map[key]=0;
-            map[key]++;
+        /* MONTHLY CHARTS */
+        drawTrend(`${rep.toLowerCase()}AssignedMonthly`, groupMonthly(list, "assigned date"));
+        drawTrend(`${rep.toLowerCase()}GSMonthly`, groupMonthly(list, "transferred to gs date"));
+        drawTrend(`${rep.toLowerCase()}AcceptedMonthly`,
+            groupMonthly(list.filter(x => !x["reason if reverted"]), "assigned date")
+        );
+
+        /* TOP SOURCES */
+        drawDonut(`${rep.toLowerCase()}Sources`, groupSources(list));
+
+        /* CONVERSION FUNNEL */
+        const assigned = list.length;
+        const gsCnt = list.filter(x => x["transferred to gs date"]).length;
+        const coeCnt = list.filter(x => x["coe obtained date"]).length;
+        const visaCnt = list.filter(x => x["visa lodged date"]).length;
+
+        drawFunnel(`${rep.toLowerCase()}Funnel`, [assigned, gsCnt, coeCnt, visaCnt]);
+
+        id(`${rep[0].toLowerCase()}ConvGS`).textContent = pct(gsCnt, assigned);
+        id(`${rep[0].toLowerCase()}ConvCOE`).textContent = pct(coeCnt, assigned);
+        id(`${rep[0].toLowerCase()}ConvVisa`).textContent = pct(visaCnt, assigned);
+
+        /* AVG DAYS TO TRANSFER */
+        const transfers = list.filter(x => x["transferred to gs date"]);
+        let totalDays = 0;
+        transfers.forEach(x => {
+            const a = parseDate(x["assigned date"]);
+            const t = parseDate(x["transferred to gs date"]);
+            if (a && t) totalDays += diffDays(t, a);
         });
-        return map;
-    }
-
-    let sA = groupByMonth(list.filter(x=>x.assignee?.includes("Sweta")),"assigned date");
-    let sG = groupByMonth(list.filter(x=>x.assignee?.includes("Sweta")),"transferred to gs date");
-
-    let aA = groupByMonth(list.filter(x=>x.assignee?.includes("Anusha")),"assigned date");
-    let aG = groupByMonth(list.filter(x=>x.assignee?.includes("Anusha")),"transferred to gs date");
-
-    let kA = groupByMonth(list.filter(x=>x.assignee?.includes("Kumkum")),"assigned date");
-    let kG = groupByMonth(list.filter(x=>x.assignee?.includes("Kumkum")),"transferred to gs date");
-
-    drawMonthlyCharts("swetaAssignedMonthly", sA);
-    drawMonthlyCharts("swetaGSMonthly", sG);
-    drawMonthlyCharts("anushaAssignedMonthly", aA);
-    drawMonthlyCharts("anushaGSMonthly", aG);
-    drawMonthlyCharts("kumkumAssignedMonthly", kA);
-    drawMonthlyCharts("kumkumGSMonthly", kG);
-
-    // Rep comparison
-    let repAssigned = {
-        Sweta: list.filter(x=>x.assignee?.includes("Sweta")).length,
-        Anusha: list.filter(x=>x.assignee?.includes("Anusha")).length,
-        Kumkum: list.filter(x=>x.assignee?.includes("Kumkum")).length
-    };
-    let repGS = {
-        Sweta: list.filter(x=>x.assignee?.includes("Sweta") && x["transferred to gs date"]).length,
-        Anusha: list.filter(x=>x.assignee?.includes("Anusha") && x["transferred to gs date"]).length,
-        Kumkum: list.filter(x=>x.assignee?.includes("Kumkum") && x["transferred to gs date"]).length
-    };
-
-    drawBarComparison("chartRepAssigned", repAssigned, "Assigned per Rep");
-    drawBarComparison("chartRepGS", repGS, "GS Transfers per Rep");
+        const avg = transfers.length ? (totalDays / transfers.length).toFixed(1) : 0;
+        id(`${rep[0].toLowerCase()}AvgDays`).textContent = avg;
+    });
 }
 
-/* -------------------------------
-    GS OVERVIEW
---------------------------------*/
-function computeGSOverview(list){
-    let gs = list.filter(x => x["transferred to gs date"]);
+/* ============================================
+   GS OVERVIEW
+============================================ */
+function computeGSOverview() {
+    const gsList = flatList.filter(x => x["transferred to gs date"]);
 
-    id("gsTotal").textContent = gs.length;
+    id("gsTotal").textContent = gsList.length;
+    id("gsPendingOffer").textContent = gsList.filter(x => !x["full offer date"]).length;
+    id("gsPendingCOE").textContent = gsList.filter(x => x["full offer date"] && !x["coe obtained date"]).length;
+    id("gsPendingVisa").textContent = gsList.filter(x => x["coe obtained date"] && !x["visa lodged date"]).length;
 
-    id("gsPendingOffer").textContent = gs.filter(x => !x["full offer date"]).length;
-    id("gsPendingCOE").textContent = gs.filter(x => x["full offer date"] && !x["coe obtained date"]).length;
-    id("gsPendingVisa").textContent = gs.filter(x => x["coe obtained date"] && !x["visa lodged date"]).length;
-
-    drawMonthlyCharts("gsTransferTrend", 
-        gs.reduce((acc,x)=>{
-            let d=parseDate(x["transferred to gs date"]);
-            if(d){
-                let key=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
-                acc[key]=(acc[key]||0)+1;
-            }
-            return acc;
-        },{}));
-
-    drawAvgStageDays(list,"avgOfferDays","full offer date","transferred to gs date");
-    drawAvgStageDays(list,"avgCOEDays","coe obtained date","full offer date");
-    drawAvgStageDays(list,"avgVisaDays","visa lodged date","coe obtained date");
+    drawTrend("gsTransferTrend", groupMonthly(gsList, "transferred to gs date"));
+    drawAvg("avgOfferDays", gsList, "full offer date", "transferred to gs date");
+    drawAvg("avgCOEDays", gsList, "coe obtained date", "full offer date");
+    drawAvg("avgVisaDays", gsList, "visa lodged date", "coe obtained date");
 }
 
-/* -------------------------------
-    GS ALERTS
---------------------------------*/
-function computeGSAlerts(list){
+/* ============================================
+   GS ALERTS
+============================================ */
+function computeGSAlerts() {
     const body = id("gsAlertsTable").querySelector("tbody");
     body.innerHTML = "";
 
-    function diffDays(d1,d2){
-        if(!d1 || !d2) return 0;
-        return Math.floor((d1 - d2)/(1000*3600*24));
-    }
+    flatList.forEach(x => {
 
-    list.forEach(x=>{
-        let stage="";
-        let days=0;
+        let stage = "Completed";
+        let days = 0;
 
-        let tgs = parseDate(x["transferred to gs date"]);
-        let full = parseDate(x["full offer date"]);
-        let coe  = parseDate(x["coe obtained date"]);
-        let visa = parseDate(x["visa lodged date"]);
+        const tgs = parseDate(x["transferred to gs date"]);
+        const full = parseDate(x["full offer date"]);
+        const coe = parseDate(x["coe obtained date"]);
+        const visa = parseDate(x["visa lodged date"]);
 
-        if(tgs && !full){
-            stage="Waiting Full Offer";
-            days=diffDays(new Date(), tgs);
-        }
-        else if(full && !coe){
-            stage="Waiting COE";
-            days=diffDays(new Date(), full);
-        }
-        else if(coe && !visa){
-            stage="Waiting Visa Lodged";
-            days=diffDays(new Date(), coe);
-        }
-        else{
-            stage="Completed";
-            days=0;
-        }
+        let refDate = null;
 
-        let cls="row-ok";
-        if(days>=15) cls="row-alert";
-        else if(days>=5) cls="row-wait";
+        if (tgs && !full) { stage = "Waiting Full Offer"; refDate = tgs; }
+        else if (full && !coe) { stage = "Waiting COE"; refDate = full; }
+        else if (coe && !visa) { stage = "Waiting Visa Lodged"; refDate = coe; }
 
-        let tr=document.createElement("tr");
-        tr.className=cls;
-        tr.innerHTML=`
-            <td>${x["client name"]||""}</td>
+        if (refDate) days = diffDays(new Date(), refDate);
+
+        let cls = (days >= 15) ? "row-alert" : (days >= 5 ? "row-wait" : "row-ok");
+
+        const tr = document.createElement("tr");
+        tr.className = cls;
+        tr.innerHTML = `
+            <td>${x["client name"] || ""}</td>
             <td>${stage}</td>
             <td>${days}</td>
-            <td>${x["gs lead"]||""}</td>
+            <td>${x["gs lead"] || ""}</td>
         `;
         body.appendChild(tr);
     });
 }
 
-/* -------------------------------
-    DETAILS TABLE
---------------------------------*/
-function renderDetails(list){
-    const body=id("detailsTable").querySelector("tbody");
-    body.innerHTML="";
-
-    list.forEach(x=>{
-        let tr=document.createElement("tr");
+/* ============================================
+   DETAILS TABLE
+============================================ */
+function renderDetails(list) {
+    const body = id("detailsTable").querySelector("tbody");
+    body.innerHTML = "";
+    list.forEach(x => {
+        const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${x["client name"]||""}</td>
-            <td><a href="${x["agentcis link"]||"#"}" target="_blank">Open</a></td>
+            <td><a href="${x["agentcis link"]}" target="_blank">Open</a></td>
             <td>${x["assignee"]||""}</td>
             <td>${x["assigned date"]||""}</td>
             <td>${x["source"]||""}</td>
@@ -642,128 +635,166 @@ function renderDetails(list){
     });
 }
 
-/* -------------------------------
-   CHART DRAWING HELPERS
---------------------------------*/
-function drawMonthlyCharts(canvasId, dataMap){
-    const ctx=document.getElementById(canvasId);
-    if(!ctx) return;
+/* ============================================
+   DATA HELPERS
+============================================ */
+function pct(a, b) {
+    if (!b) return "0%";
+    return ((a / b) * 100).toFixed(1) + "%";
+}
 
-    new Chart(ctx,{
-        type:"bar",
-        data:{
-            labels:Object.keys(dataMap),
-            datasets:[{
-                label:"Count",
-                data:Object.values(dataMap),
-                backgroundColor:"#008cff"
+function groupMonthly(arr, field) {
+    const map = {};
+    arr.forEach(x => {
+        const d = parseDate(x[field]);
+        if (!d) return;
+        const key = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+        map[key] = (map[key] || 0) + 1;
+    });
+    return map;
+}
+
+function groupSources(arr) {
+    const map = {};
+    arr.forEach(x => {
+        const s = (x["source"] || "Unknown").trim();
+        map[s] = (map[s] || 0) + 1;
+    });
+    return map;
+}
+/* ============================================
+   CHART DRAWERS
+============================================ */
+
+function drawTrend(idName, dataMap) {
+    const ctx = id(idName);
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: Object.keys(dataMap),
+            datasets: [{
+                label: "Count",
+                data: Object.values(dataMap),
+                backgroundColor: "#00C4FF"
             }]
         },
-        options:{responsive:true,plugins:{legend:{display:false}}}
+        options: { responsive: true, plugins: { legend: { display: false } } }
     });
 }
 
-function drawBarComparison(canvasId, dataset, label){
-    const ctx=id(canvasId);
-    new Chart(ctx,{
-        type:"bar",
-        data:{
-            labels:Object.keys(dataset),
-            datasets:[{
-                label,
-                data:Object.values(dataset),
-                backgroundColor:"#00C4FF"
+function drawDonut(idName, dataMap) {
+    const ctx = id(idName);
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: Object.keys(dataMap),
+            datasets: [{
+                data: Object.values(dataMap),
+                backgroundColor: [
+                    getComputedStyle(document.documentElement).getPropertyValue('--donut1').trim(),
+                    getComputedStyle(document.documentElement).getPropertyValue('--donut2').trim(),
+                    getComputedStyle(document.documentElement).getPropertyValue('--donut3').trim(),
+                    getComputedStyle(document.documentElement).getPropertyValue('--donut4').trim()
+                ]
             }]
         },
-        options:{responsive:true}}
-    );
+        options: { responsive: true }
+    });
 }
 
-function drawAvgStageDays(list,canvasId,fieldEnd,fieldStart){
-    const ctx=id(canvasId);
-    let arr=list.filter(x=>x[fieldEnd]&&x[fieldStart]);
+function drawFunnel(idName, arr) {
+    const ctx = id(idName);
+    if (!ctx) return;
 
-    let total=0,count=0;
-    arr.forEach(x=>{
-        let d1=parseDate(x[fieldEnd]);
-        let d2=parseDate(x[fieldStart]);
-        if(d1&&d2){
-            total+= (d1-d2)/(1000*3600*24);
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: ["Assigned","GS","COE","Visa"],
+            datasets: [{
+                data: arr,
+                backgroundColor: "#00FFC6"
+            }]
+        },
+        options: { responsive: true, plugins:{ legend:{ display:false } } }
+    });
+}
+
+function drawAvg(idName, list, endField, startField) {
+    const ctx = id(idName);
+    if (!ctx) return;
+
+    let sum = 0, count = 0;
+    list.forEach(x => {
+        const s = parseDate(x[startField]);
+        const e = parseDate(x[endField]);
+        if (s && e) {
+            sum += diffDays(e, s);
             count++;
         }
     });
 
-    new Chart(ctx,{
-        type:"bar",
-        data:{
-            labels:["AVG Days"],
-            datasets:[{
-                data:[count? total/count : 0],
-                backgroundColor:"#00C4FF"
+    const avg = count ? sum / count : 0;
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: ["Average Days"],
+            datasets: [{
+                data: [avg],
+                backgroundColor: "#7A5CFF"
             }]
         },
-        options:{responsive:true,plugins:{legend:{display:false}}}
+        options: { responsive:true, plugins:{ legend:{ display:false } } }
     });
 }
-    /* =====================================================
-    CLICK → FILTER → GO TO DETAILS
-=====================================================*/
-function filterAndShowDetails(filterFn) {
-    const filtered = flatList.filter(filterFn);
-    renderDetails(filtered);
+
+/* ============================================
+   CLICK → FILTER
+============================================ */
+function filterAndShowDetails(fn) {
+    const list = flatList.filter(fn);
+    renderDetails(list);
     openSection("sectionDetails");
 }
 
-/* CARD CLICKS (Sales Overview) */
-id("cardAssigned").onclick = () => filterAndShowDetails(x => true);
+id("cardAssigned").onclick = () => filterAndShowDetails(() => true);
+id("cardAccepted").onclick = () => filterAndShowDetails(x => !x["reason if reverted"]);
+id("cardReverted").onclick = () => filterAndShowDetails(x => x["reason if reverted"]);
+id("cardGS").onclick = () => filterAndShowDetails(x => x["transferred to gs date"]);
+id("cardCOE").onclick = () => filterAndShowDetails(x => x["coe obtained date"]);
 
-id("cardAccepted").onclick = () =>
-    filterAndShowDetails(x => !x["reason if reverted"]);
+/* ============================================
+   SALES REP TABS SWITCH
+============================================ */
+function openRep(rep) {
+    ["Sweta","Anusha","Kumkum"].forEach(r => {
+        id(`rep${r}`).classList.remove("active");
+        id(`rep${r}Tab`).classList.remove("active");
+    });
 
-id("cardReverted").onclick = () =>
-    filterAndShowDetails(x => x["reason if reverted"]);
+    id(`rep${rep}`).classList.add("active");
+    id(`rep${rep}Tab`).classList.add("active");
+}
 
-id("cardGS").onclick = () =>
-    filterAndShowDetails(x => x["transferred to gs date"]);
+id("repSweta").onclick = () => openRep("Sweta");
+id("repAnusha").onclick = () => openRep("Anusha");
+id("repKumkum").onclick = () => openRep("Kumkum");
 
-id("cardCOE").onclick = () =>
-    filterAndShowDetails(x => x["coe obtained date"]);
+/* ============================================
+   MAIN TAB SWITCHING
+============================================ */
+function openSection(sec) {
+    ["sectionSales","sectionGS","sectionDetails"].forEach(s => id(s).classList.remove("active"));
+    id(sec).classList.add("active");
 
-/* SALES REP ACTIVE CARDS */
-id("activeSweta").parentNode.onclick = () =>
-    filterAndShowDetails(x =>
-        x["assignee"]?.toLowerCase().includes("sweta") &&
-        !x["reason if reverted"] &&
-        !x["transferred to gs date"]
-    );
-
-id("activeAnusha").parentNode.onclick = () =>
-    filterAndShowDetails(x =>
-        x["assignee"]?.toLowerCase().includes("anusha") &&
-        !x["reason if reverted"] &&
-        !x["transferred to gs date"]
-    );
-
-id("activeKumkum").parentNode.onclick = () =>
-    filterAndShowDetails(x =>
-        x["assignee"]?.toLowerCase().includes("kumkum") &&
-        !x["reason if reverted"] &&
-        !x["transferred to gs date"]
-    );
-
-
-/* =====================================================
-    TAB + SECTION SWITCHING
-=====================================================*/
-
-function openSection(idName) {
-    document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
-    id(idName).classList.add("active");
-
-    document.querySelectorAll(".sidebar button").forEach(btn => btn.classList.remove("active"));
-    if(idName === "sectionSales") id("btnSales").classList.add("active");
-    if(idName === "sectionGS") id("btnGS").classList.add("active");
-    if(idName === "sectionDetails") id("btnDetails").classList.add("active");
+    ["btnSales","btnGS","btnDetails"].forEach(b => id(b).classList.remove("active"));
+    if(sec === "sectionSales") id("btnSales").classList.add("active");
+    if(sec === "sectionGS") id("btnGS").classList.add("active");
+    if(sec === "sectionDetails") id("btnDetails").classList.add("active");
 }
 
 id("btnSales").onclick = () => {
@@ -781,60 +812,56 @@ id("btnDetails").onclick = () => {
     renderDetails(flatList);
 };
 
-
-/* SALES SUBTABS */
+/* ============================================
+   SALES SUBTABS
+============================================ */
 function openSalesTab(tab) {
+    id("salesOverview").classList.remove("active");
+    id("salesRepPage").classList.remove("active");
     id("tabSalesOverview").classList.remove("active");
     id("tabSalesRep").classList.remove("active");
 
-    id("salesOverview").classList.remove("active");
-    id("salesRepPage").classList.remove("active");
-
     if (tab === "salesOverview") {
-        id("tabSalesOverview").classList.add("active");
         id("salesOverview").classList.add("active");
+        id("tabSalesOverview").classList.add("active");
     } else {
-        id("tabSalesRep").classList.add("active");
         id("salesRepPage").classList.add("active");
+        id("tabSalesRep").classList.add("active");
     }
 }
 
 id("tabSalesOverview").onclick = () => openSalesTab("salesOverview");
-id("tabSalesRep").onclick = () => openSalesTab("salesRep");
+id("tabSalesRep").onclick = () => openSalesTab("salesRepPage");
 
-
-/* GS SUBTABS */
+/* ============================================
+   GS SUBTABS
+============================================ */
 function openGSTab(tab) {
+    id("gsOverview").classList.remove("active");
+    id("gsAlerts").classList.remove("active");
     id("tabGSOverview").classList.remove("active");
     id("tabGSAlerts").classList.remove("active");
 
-    id("gsOverview").classList.remove("active");
-    id("gsAlerts").classList.remove("active");
-
     if (tab === "gsOverview") {
-        id("tabGSOverview").classList.add("active");
         id("gsOverview").classList.add("active");
+        id("tabGSOverview").classList.add("active");
     } else {
-        id("tabGSAlerts").classList.add("active");
         id("gsAlerts").classList.add("active");
+        id("tabGSAlerts").classList.add("active");
     }
 }
 
 id("tabGSOverview").onclick = () => openGSTab("gsOverview");
 id("tabGSAlerts").onclick = () => openGSTab("gsAlerts");
 
-
-/* =====================================================
-    DEFAULT LANDING PAGE
-=====================================================*/
+/* ============================================
+   DEFAULT LOAD
+============================================ */
 openSection("sectionSales");
 openSalesTab("salesOverview");
+openRep("Sweta");
 
-/* =====================================================
-    RUN THE DASHBOARD
-=====================================================*/
 loadData();
-
 
 </script>
 </body>
