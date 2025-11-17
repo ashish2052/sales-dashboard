@@ -1,475 +1,361 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>GSG Neon Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<title>Sales & GS Neon Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- GOOGLE FONTS -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
 <style>
-/* ================================
-   🔥 NEON DARK THEME 
-   (Ashish Signature Style)
-   ================================ */
-:root {
-  --bg: #050A1F;
-  --card: #0A102C;
-  --card2: #0E1438;
-  --text: #E6EEFF;
-  --sub: #8FA4CE;
-  --neon-blue: #4DB7FF;
-  --neon-green: #4DFF91;
-  --border: rgba(255,255,255,0.08);
-  --shadow: 0 0 28px rgba(0, 174, 255, 0.25);
-}
-
-* { box-sizing: border-box; }
+/* ============================================================
+      GLOBAL NEON THEME
+============================================================ */
 body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
-  color: var(--text);
+  background: #050A1F;
   font-family: 'Poppins', sans-serif;
-  display: flex;
+  color: #D6E4FF;
 }
 
-/* ================================
-   SIDE NAVIGATION
-   ================================ */
-aside {
-  width: 240px;
-  padding: 22px 16px;
-  background: rgba(0,0,0,0.35);
-  border-right: 1px solid var(--border);
-  backdrop-filter: blur(8px);
-  position: sticky;
-  top: 0;
-  height: 100vh;
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #0f2a60;
+  border-radius: 5px;
 }
 
-.logo {
-  font-size: 22px;
+/* ============================================================
+      TOP HEADER
+============================================================ */
+.header {
+  background: rgba(0, 0, 0, 0.35);
+  padding: 18px;
+  text-align: center;
+  font-size: 24px;
   font-weight: 700;
-  color: var(--neon-blue);
-  margin-bottom: 25px;
-  text-shadow: 0 0 12px var(--neon-blue);
-}
-
-.side-btn {
-  width: 100%;
-  text-align: left;
-  padding: 12px 16px;
-  background: var(--card2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  color: var(--sub);
-  margin-bottom: 12px;
-  cursor: pointer;
-  transition: 0.2s;
-  font-size: 15px;
-}
-
-.side-btn:hover {
-  background: #111A42;
-  transform: translateX(3px);
-}
-
-.side-btn.active {
-  background: linear-gradient(90deg, var(--neon-blue), var(--neon-green));
-  color: #041125;
-  font-weight: 700;
-  border-color: transparent;
-  box-shadow: 0 0 14px var(--neon-blue);
-}
-
-/* ================================
-   MAIN CONTENT 
-   ================================ */
-main {
-  flex: 1;
-  min-width: 0;
-  padding: 20px;
-}
-
-.wrap {
-  max-width: 1500px;
-  margin: auto;
-}
-
-/* ================================
-   HEADER
-   ================================ */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 20px;
-}
-
-h1 {
-  margin: 0;
-  font-size: 32px;
-  color: var(--neon-blue);
-  text-shadow: 0 0 12px var(--neon-blue);
-}
-
-.sub {
-  color: var(--sub);
-  font-size: 13px;
+  color: #5FB2FF;
+  text-shadow: 0 0 12px #008CFF;
+  border-bottom: 1px solid #0D193D;
 }
 
 #today {
-  background: var(--card2);
-  padding: 8px 16px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
+  color: #8CD2FF;
   font-size: 14px;
+  margin-top: 5px;
 }
 
-/* ================================
-   CARD / PANEL BASE
-   ================================ */
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 16px;
-  box-shadow: var(--shadow);
-}
-
-/* ================================
-   CONTROLS
-   ================================ */
-.controls {
+/* ============================================================
+      MAIN CONTAINER
+============================================================ */
+.container {
   display: flex;
-  gap: 12px;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+}
+
+/* ============================================================
+      LEFT SIDEBAR
+============================================================ */
+.sidebar {
+  width: 220px;
+  background: #07112C;
+  border-right: 1px solid #0B1A40;
+  padding-top: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.side-btn {
+  padding: 14px 18px;
+  margin: 6px 12px;
+  background: #0A1A3A;
+  border-radius: 10px;
+  color: #87BFFF;
+  font-size: 15px;
+  cursor: pointer;
+  border: 1px solid #0C2A60;
+  transition: 0.3s;
+}
+.side-btn:hover {
+  background: #0F2D60;
+}
+.side-btn.active {
+  background: #133B7A;
+  border-color: #1B54A8;
+  color: #A8D3FF;
+  box-shadow: 0 0 12px #007BFF;
+}
+
+/* ============================================================
+      RIGHT CONTENT AREA
+============================================================ */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 25px;
+}
+
+/* ============================================================
+      KPI BOXES
+============================================================ */
+.kpi-row {
+  display: flex;
+  gap: 20px;
   flex-wrap: wrap;
-  align-items: center;
-}
-
-.btn {
-  padding: 7px 14px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--card2);
-  color: var(--text);
-  cursor: pointer;
-}
-
-.btn.active {
-  background: var(--neon-blue);
-  color: #041125;
-  border-color: transparent;
-  font-weight: 700;
-}
-
-/* ================================
-   SELECTS / INPUTS
-   ================================ */
-select, input[type=date], input[type=number] {
-  padding: 8px 10px;
-  background: var(--card2);
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  color: var(--text);
-}
-
-/* ================================
-   TABS
-   ================================ */
-.tabs {
-  display: flex;
-  gap: 10px;
-  margin-top: 18px;
-}
-
-.tab-btn {
-  background: var(--card2);
-  padding: 8px 14px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  cursor: pointer;
-}
-
-.tab-btn.active {
-  background: var(--neon-blue);
-  color: #041125;
-  font-weight: 700;
-  box-shadow: 0 0 12px var(--neon-blue);
-}
-
-.section { display: none; }
-.section.active { display: block; }
-.tab { display: none; margin-top: 15px; }
-.tab.active { display: block; }
-
-/* ================================
-   KPI CARDS
-   ================================ */
-.kpis {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 14px;
-  margin: 18px 0;
+  margin-bottom: 25px;
 }
 
 .kpi {
-  background: var(--card2);
-  border: 1px solid var(--border);
+  background: #0A1C45;
+  padding: 18px;
   border-radius: 14px;
-  padding: 14px;
-  box-shadow: var(--shadow);
+  width: 180px;
+  border: 1px solid #0D2C60;
+  box-shadow: 0 0 12px #002C7A inset;
+  text-align: center;
+  cursor: default;
+}
+
+.kpi.clickable {
+  cursor: pointer;
+}
+.kpi:hover {
+  background: #0E2A60;
 }
 
 .kpi h3 {
-  color: var(--sub);
-  margin: 0 0 6px;
-  font-size: 13px;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #88C5FF;
 }
-
-.big {
+.kpi .big {
   font-size: 28px;
   font-weight: 700;
-  text-shadow: 0 0 10px var(--neon-green);
+  color: #4DFF91;
+  text-shadow: 0 0 10px #00FF88;
 }
 
-/* ================================
-   TABLES
-   ================================ */
-.table {
-  margin-top: 12px;
-  overflow: auto;
-  border-radius: 12px;
-  border: 1px solid var(--border);
+/* ============================================================
+      SELECTS & FILTERS
+============================================================ */
+.filters {
+  margin: 20px 0;
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
 }
 
+select, input[type="date"] {
+  background: #071733;
+  border: 1px solid #0D2B66;
+  color: #A5CAFF;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+select:focus, input[type="date"]:focus {
+  outline: none;
+  border-color: #1E5AE8;
+}
+
+/* BUTTON GROUP */
+#dateBtns .btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #0B2047;
+  border: 1px solid #12346A;
+  color: #7AB5FF;
+  margin-right: 10px;
+  cursor: pointer;
+}
+#dateBtns .btn:hover {
+  background: #113066;
+}
+#dateBtns .active {
+  background: #1A4EA0;
+  color: #C9E2FF;
+}
+
+/* ============================================================
+      NEON TABLES
+============================================================ */
 table {
   width: 100%;
   border-collapse: collapse;
-}
-
-th {
-  background: #0F1A3E;
-  padding: 10px;
-  font-size: 12px;
-  color: var(--neon-blue);
-  text-shadow: 0 0 8px var(--neon-blue);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-}
-
-td {
-  padding: 10px;
-  border-bottom: 1px solid var(--border);
-  font-size: 14px;
-}
-
-/* ================================
-   CHARTS
-   ================================ */
-canvas {
-  background: var(--card2);
-  padding: 12px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-}
-
-/* ================================
-   DETAILS TAB (NEON)
-   ================================ */
-#details-table-wrap {
   margin-top: 18px;
+  background: #06132B;
+  color: #C7DFFF;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #0B234A;
+  box-shadow: 0 0 14px #001732 inset;
+}
+th, td {
+  padding: 12px 14px;
+  font-size: 14px;
+  border-bottom: 1px solid #0A254E;
+}
+th {
+  background: #0C1F44;
+  color: #8CC5FF;
+  text-shadow: 0 0 6px #0077FF;
 }
 
-#details-title {
-  font-size: 20px;
-  color: var(--neon-green);
-  font-weight: 700;
-  text-shadow: 0 0 14px var(--neon-green);
+tr:hover {
+  background: #0E2A55;
+}
+.click-row {
+  cursor: pointer;
+}
+
+/* ============================================================
+      SECTION TITLES
+============================================================ */
+.section-title {
+  font-size: 22px;
+  margin-bottom: 18px;
+  color: #A3CEFF;
+  text-shadow: 0 0 10px #0055FF;
+}
+
+/* CANVAS CHART */
+canvas {
+  background: #061025;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid #0E254E;
+  box-shadow: 0 0 14px #001732 inset;
+  margin-bottom: 30px;
+}
+
+/* HIDDEN SECTIONS */
+.section {
+  display: none;
+}
+.section.active {
+  display: block;
 }
 </style>
-
 </head>
 
 <body>
 
-<!-- ======================
-     SIDE NAVIGATION
-     ====================== -->
-<aside>
-  <div class="logo">GSG Neon</div>
-
-  <button class="side-btn active" data-dept="sales">💼 Sales</button>
-  <button class="side-btn" data-dept="gs">🧩 GS Team</button>
-  <button class="side-btn" data-dept="bonus">💰 Bonus</button>
-  <button class="side-btn" data-dept="details">🔍 Details</button>
-</aside>
-
-<main>
-<div class="wrap">
-
-<!-- ======================
-     HEADER
-     ====================== -->
-<header>
-  <div>
-    <h1 id="title">Sales — Neon Dashboard</h1>
-    <div class="sub">Connected to Cloudflare API → Automatic Neon Updates</div>
-  </div>
-  <div class="card"><div id="today"></div></div>
-</header>
-
-<!-- ======================
-     CONTROLS PANEL
-     ====================== -->
-<div class="card controls">
-  <span id="hint" class="sub">Loading data from API...</span>
-
-  <span class="sub">Office:</span>
-  <select id="officeSel">
-    <option>All</option>
-    <option>Nepal</option>
-    <option>Australia</option>
-  </select>
-
-  <span class="sub">Salesperson:</span>
-  <select id="salesSel">
-    <option>All</option>
-  </select>
-
-  <span class="sub">Date:</span>
-  <div id="dateBtns" class="controls">
-    <button class="btn active" data-range="all">All</button>
-    <button class="btn" data-range="90">90d</button>
-    <button class="btn" data-range="60">60d</button>
-    <button class="btn" data-range="30">30d</button>
-    <button class="btn" data-range="7">7d</button>
-  </div>
-
-  <span class="sub">Custom:</span>
-  <input id="from" type="date">
-  <span class="sub">—</span>
-  <input id="to" type="date">
-  <button id="applyCustom" class="btn">Apply</button>
+<div class="header">
+  Sales & GS Neon Dashboard  
+  <div id="today"></div>
 </div>
 
-<!-- ======================
-     SALES SECTION
-     ====================== -->
-<section id="dept-sales" class="section active">
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="sales-summary">Summary</button>
-    <button class="tab-btn" data-tab="sales-reps">Salespersons</button>
+<div class="container">
+  <!-- ============================================================
+        SIDEBAR
+  ============================================================ -->
+  <div class="sidebar">
+    <div class="side-btn active" data-dept="sales">Sales</div>
+    <div class="side-btn" data-dept="gs">GS</div>
+    <div class="side-btn" data-dept="bonus">Bonus</div>
+    <div class="side-btn" data-dept="details">Details</div>
   </div>
 
-  <section id="sales-summary" class="tab active">
-    <div id="sales_story" class="card" style="margin-bottom:12px"></div>
-    <div class="kpis" id="sales_kpis"></div>
+  <!-- ============================================================
+        MAIN CONTENT
+  ============================================================ -->
+  <div class="content">
 
-    <div class="grid-2">
-      <div class="card"><h3>Transfers Monthly</h3><canvas id="sales_trans_m" height="230"></canvas></div>
-      <div class="card"><h3>COEs Monthly</h3><canvas id="sales_coe_m" height="230"></canvas></div>
+    <!-- ================= SALES SECTION ================= -->
+    <div id="dept-sales" class="section active">
+      <div class="section-title">Sales Overview</div>
+
+      <div class="filters">
+        <select id="officeSel">
+          <option>All</option>
+          <option>Nepal</option>
+          <option>Australia</option>
+        </select>
+
+        <select id="salesSel">
+          <option>All</option>
+        </select>
+
+        <div id="dateBtns">
+          <span class="btn active" data-range="all">All</span>
+          <span class="btn" data-range="30">30 Days</span>
+          <span class="btn" data-range="60">60 Days</span>
+          <span class="btn" data-range="90">90 Days</span>
+        </div>
+
+        <div>
+          <input type="date" id="from" />
+          <input type="date" id="to" />
+          <button id="applyCustom" class="btn">Apply</button>
+        </div>
+      </div>
+
+      <div id="sales_kpis" class="kpi-row"></div>
+
+      <canvas id="sales_trans_m" height="160"></canvas>
+      <canvas id="sales_coe_m" height="160"></canvas>
+
+      <table id="sales_rep_tbl">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
     </div>
-  </section>
 
-  <section id="sales-reps" class="tab">
-    <div class="card sub" style="margin-bottom:8px">
-      Targets → Nepal: 15/mo | Australia: 10/mo
+    <!-- ================== GS SECTION ================== -->
+    <div id="dept-gs" class="section">
+      <div class="section-title">GS Overview</div>
+
+      <div id="gs_kpis" class="kpi-row"></div>
+
+      <canvas id="gs_visa_m" height="160"></canvas>
+
+      <table id="gs_rep_tbl">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
     </div>
-    <div class="table"><table id="sales_rep_tbl"><thead></thead><tbody></tbody></table></div>
-  </section>
-</section>
 
-<!-- ======================
-     GS SECTION
-     ====================== -->
-<section id="dept-gs" class="section">
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="gs-summary">Summary</button>
-    <button class="tab-btn" data-tab="gs-reps">GS Officers</button>
-  </div>
+    <!-- ================= BONUS SECTION ================= -->
+    <div id="dept-bonus" class="section">
+      <div class="section-title">Bonus</div>
 
-  <section id="gs-summary" class="tab active">
-    <div id="gs_story" class="card" style="margin-bottom:12px"></div>
-    <div class="kpis" id="gs_kpis"></div>
-
-    <div class="grid-2">
-      <div class="card"><h3>Visa Grants Monthly</h3><canvas id="gs_visa_m" height="230"></canvas></div>
-      <div class="card"><h3>Grant Rate Quarterly</h3><canvas id="gs_rate_q" height="230"></canvas></div>
-    </div>
-  </section>
-
-  <section id="gs-reps" class="tab">
-    <div class="card sub" style="margin-bottom:8px">
-      KPI: Grant ≥ 90% & COE Performance Rankings
-    </div>
-    <div class="table"><table id="gs_rep_tbl"><thead></thead><tbody></tbody></table></div>
-  </section>
-</section>
-
-<!-- ======================
-     BONUS SECTION
-     ====================== -->
-<section id="dept-bonus" class="section">
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="bonus-qtr">Quarterly Eligibility</button>
-  </div>
-
-  <section id="bonus-qtr" class="tab active">
-    <div class="card sub">
-      <span>Quarter:</span>
       <select id="bonusQuarterSel"></select>
+      <div id="bonus_kpis" class="kpi-row"></div>
+      <canvas id="bonus_chart" height="160"></canvas>
     </div>
 
-    <div class="kpis" id="bonus_kpis"></div>
+    <!-- ================= DETAILS SECTION ================= -->
+    <div id="dept-details" class="section">
+      <div class="section-title" id="details-title">Details</div>
 
-    <div class="grid-2">
-      <div class="card">
-        <h3>Nepal Sales Bonus</h3>
-        <div class="table"><table id="bonus_sales_np_tbl"><thead></thead><tbody></tbody></table></div>
-      </div>
-
-      <div class="card">
-        <h3>Australia Sales Bonus</h3>
-        <div class="table"><table id="bonus_sales_au_tbl"><thead></thead><tbody></tbody></table></div>
-      </div>
+      <table id="details_tbl">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
     </div>
 
-    <div class="card" style="margin-top:14px">
-      <h3>GS Bonus</h3>
-      <div class="table"><table id="bonus_gs_tbl"><thead></thead><tbody></tbody></table></div>
-    </div>
-  </section>
-</section>
+  </div> <!-- end content -->
+</div> <!-- end container -->
 
-<!-- ======================
-     DETAILS SECTION (NEW)
-     ====================== -->
-<section id="dept-details" class="section">
-  <h2 id="details-title">Details</h2>
-
-  <div id="details-table-wrap" class="card">
-    <div class="table">
-      <table id="details_tbl"><thead></thead><tbody></tbody></table>
-    </div>
-  </div>
-</section>
-<script>
+<!-- PART 2 STARTS BELOW (JS ENGINE) --
+   <script>
 // ===========================================================
-// 🔥 NEON DASHBOARD CORE ENGINE (FIXED PART 2)
+//   NEON DASHBOARD — FULL MERGED JAVASCRIPT ENGINE
 // ===========================================================
 
+// TODAY DATE
 document.getElementById("today").textContent =
   new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 
+// API ENDPOINT
 const API_URL = "https://salesdashboard.ashishoct34.workers.dev/";
 
+// GLOBAL STATE
 let _wb = null;
 let RANGE = "all";
 let CUSTOM = null;
@@ -477,21 +363,18 @@ let OFFICE = "All";
 let SALESPERSON = "All";
 let BONUS_Q = null;
 
-// SIMPLE UTILITIES
+// UTILITIES
 const fmt = new Intl.NumberFormat("en-IN");
 const num = (n) => (isFinite(n) ? fmt.format(Math.round(n)) : "—");
 const lc = (s) => (s || "").toString().trim().toLowerCase();
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
+// DATE PARSE
 function toDate(v) {
   if (!v) return null;
   if (v instanceof Date) return isNaN(v) ? null : v;
-
-  const s = String(v).trim();
-  if (!s) return null;
-
-  const d = new Date(s);
+  const d = new Date(String(v).trim());
   return isNaN(d) ? null : d;
 }
 
@@ -505,6 +388,7 @@ const quarterKey = (d) =>
     ? `${d.getFullYear()}-Q${Math.floor(d.getMonth() / 3) + 1}`
     : "";
 
+// DATE RANGE FILTER
 function inRange(d, today) {
   if (!(d instanceof Date) || isNaN(d) || d > today) return false;
   if (CUSTOM) {
@@ -525,9 +409,9 @@ function filterByDate(rows, field) {
   return rows.filter((r) => r[field] instanceof Date && inRange(r[field], today));
 }
 
-// ======================================================
-//    API → Normalize → Workbook
-// ======================================================
+// ===========================================================
+//           API LOAD + NORMALIZE WORKBOOK
+// ===========================================================
 async function loadFromAPI() {
   try {
     $("#hint").textContent = "Fetching from Cloudflare API...";
@@ -536,6 +420,7 @@ async function loadFromAPI() {
     const json = await res.json();
     const data = json.data;
 
+    // ORGANIZE INTO WORKBOOK
     _wb = {
       Sweta: data.Sweta || [],
       Anusha: data.Anusha || [],
@@ -547,7 +432,9 @@ async function loadFromAPI() {
     populateSalesDropdown();
     rebuildQuarterDropdown();
     buildAll();
+
   } catch (e) {
+    console.log(e);
     $("#hint").textContent = "API ERROR: " + e.message;
   }
 }
@@ -562,15 +449,15 @@ const H = {
   assignee: ["Assignee"],
   assigned: ["Assigned Date"],
 
-  tgs: ["Transferred to GS Date"],    // COLUMN I
-  coe: ["COE Obtained Date"],         // COLUMN K
-  lodged: ["Visa Lodged Date"],       // COLUMN L
-  visa: ["Visa Obtained Date"],       // COLUMN M
+  tgs: ["Transferred to GS Date"],    // column I
+  coe: ["COE Obtained Date"],         // column K
+  lodged: ["Visa Lodged Date"],       // column L
+  visa: ["Visa Obtained Date"],       // column M
 
   reason: ["Reason if Reverted"]
 };
 
-// FUZZY FIELD PICKER
+// FUZZY FIELD MATCHING
 function fuzzyKey(row, arr) {
   const want = Array.isArray(arr) ? arr : [arr];
   const keys = Object.keys(row);
@@ -603,7 +490,7 @@ function normalizeOffice(v) {
 }
 
 // ===========================================================
-// 🔥 FIXED allRows() — this was the function that was broken
+//                  BUILD UNIFIED ROWS
 // ===========================================================
 function allRows() {
   const acc = [];
@@ -637,7 +524,48 @@ function allRows() {
 }
 
 // ===========================================================
-// SALES SECTION
+//              INITIAL DROPDOWNS
+// ===========================================================
+function populateSalesDropdown() {
+  const reps = new Set();
+
+  Object.values(_wb || {}).forEach((arr) => {
+    (arr || []).forEach((r) => {
+      const office = normalizeOffice(pick(r, H.office));
+      if (OFFICE !== "All" && office !== OFFICE) return;
+
+      const s = (pick(r, H.salesRep) || "").trim();
+      if (s) reps.add(s);
+    });
+  });
+
+  const sel = $("#salesSel");
+  const current = sel.value;
+  sel.innerHTML = ["All", ...Array.from(reps).sort()]
+    .map((n) => `<option ${n === current ? "selected" : ""}>${n}</option>`)
+    .join("");
+}
+
+function rebuildQuarterDropdown() {
+  const setQ = new Set();
+
+  Object.values(_wb || {}).forEach((arr) => {
+    arr.forEach((r) => {
+      ["coe", "lodged", "visa"].forEach((k) => {
+        const d = toDate(pick(r, H[k]));
+        if (d) setQ.add(quarterKey(d));
+      });
+    });
+  });
+
+  const list = [...setQ].filter(Boolean).sort();
+  $("#bonusQuarterSel").innerHTML =
+    `<option value="">Latest</option>` +
+    list.map((q) => `<option>${q}</option>`).join("");
+}
+
+// ===========================================================
+//                   SALES SECTION
 // ===========================================================
 let SCharts = { t: null, c: null };
 
@@ -660,12 +588,14 @@ function sales_build() {
     <div class="kpi"><h3>COE Rate</h3><div class="big">${assigned.length ? ((coes.length / assigned.length) * 100).toFixed(1) : "0.0"}%</div></div>
   `;
 
+  // MONTHLY TRANSFERS
   const byM_T = {};
   transferred.forEach((r) => {
     const k = ymon(r.tgs);
     byM_T[k] = (byM_T[k] || 0) + 1;
   });
 
+  // MONTHLY COEs
   const byM_C = {};
   coes.forEach((r) => {
     const k = ymon(r.coe);
@@ -691,7 +621,9 @@ function sales_build() {
     type: "bar",
     data: {
       labels: months,
-      datasets: [{ label: "COEs", data: months.map((k) => byM_C[k] || 0), backgroundColor: "#4DFF91" }]
+      datasets: [
+        { label: "COEs", data: months.map((k) => byM_C[k] || 0), backgroundColor: "#4DFF91" }
+      ]
     },
     options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
   });
@@ -747,9 +679,9 @@ function renderSalesRepTable(rows) {
     .join("");
 }
 
-// ======================================================
-// GS SECTION
-// ======================================================
+// ===========================================================
+//                    GS SECTION
+// ===========================================================
 let GCharts = { visa: null };
 
 function gs_build() {
@@ -781,7 +713,12 @@ function gs_build() {
   if (GCharts.visa) GCharts.visa.destroy();
   GCharts.visa = new Chart($("#gs_visa_m"), {
     type: "bar",
-    data: { labels, datasets: [{ label: "Visa", data: labels.map((k) => m[k]), backgroundColor: "#4DFF91" }] },
+    data: {
+      labels,
+      datasets: [
+        { label: "Visa", data: labels.map((k) => m[k]), backgroundColor: "#4DFF91" }
+      ]
+    },
     options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
   });
 
@@ -802,12 +739,18 @@ function renderGSRepTable(rows) {
 
   $("#gs_rep_tbl thead").innerHTML = `
     <tr>
-      <th>GS Rep</th><th>Assigned</th><th>COE</th><th>Lodged</th><th>Visa</th><th>Rate</th>
+      <th>GS Rep</th>
+      <th>Assigned</th>
+      <th>COE</th>
+      <th>Lodged</th>
+      <th>Visa</th>
+      <th>Rate</th>
     </tr>`;
 
   $("#gs_rep_tbl tbody").innerHTML = Object.entries(by)
     .map(([rep, o]) => {
       const rate = o.lodged ? ((o.visa / o.lodged) * 100).toFixed(1) : 0;
+
       return `
         <tr class="click-row" data-gs="${rep}">
           <td><b>${rep}</b></td>
@@ -821,98 +764,28 @@ function renderGSRepTable(rows) {
     .join("");
 }
 
-// BONUS (unchanged)
+// ===========================================================
+//                    BONUS SECTION
+// ===========================================================
 function bonus_build() {
-  // You can paste your previous bonus logic or keep as is.
+  // Placeholder (your logic can go here later)
 }
 
-// ======================================================
-// NAVIGATION & FILTERS
-// ======================================================
-const sections = {
-  sales: "dept-sales",
-  gs: "dept-gs",
-  bonus: "dept-bonus",
-  details: "dept-details"
-};
-
-$$(".side-btn").forEach((b) => {
-  b.onclick = () => {
-    $$(".side-btn").forEach((x) => x.classList.remove("active"));
-    b.classList.add("active");
-
-    Object.values(sections).forEach((id) => $("#" + id).classList.remove("active"));
-    $("#" + sections[b.dataset.dept]).classList.add("active");
-
-    $("#title").textContent = b.textContent.replace(/[^\w ]+/g, "").trim() + " — Neon Dashboard";
-  };
-});
-
-$("#dateBtns").onclick = (e) => {
-  if (!e.target.classList.contains("btn")) return;
-
-  $$("#dateBtns .btn").forEach((x) => x.classList.remove("active"));
-  e.target.classList.add("active");
-
-  RANGE = e.target.dataset.range;
-  CUSTOM = null;
-
-  if (_wb) buildAll();
-};
-
-$("#applyCustom").onclick = () => {
-  const f = $("#from").value;
-  const t = $("#to").value;
-  if (f && t) {
-    CUSTOM = [f, t];
-    $$("#dateBtns .btn").forEach((x) => x.classList.remove("active"));
-    if (_wb) buildAll();
-  }
-};
-
-$("#officeSel").onchange = (e) => {
-  OFFICE = e.target.value;
-  populateSalesDropdown();
-  if (_wb) buildAll();
-};
-
-$("#salesSel").onchange = (e) => {
-  SALESPERSON = e.target.value;
-  if (_wb) buildAll();
-};
-
-function buildAll() {
-  sales_build();
-  gs_build();
-  bonus_build();
-}
-</script>
-<script>
 // ===========================================================
-// 🔥 PART 3 / 3 — DETAILS TAB + CLICK-TO-FILTER ENGINE
+//                    DETAILS TAB ENGINE
 // ===========================================================
-
-// ---------------------------------------------
-// Move to Details Tab
-// ---------------------------------------------
 function openDetailsTab() {
-  // Activate left side tab
   $$(".side-btn").forEach((x) => x.classList.remove("active"));
   document.querySelector('[data-dept="details"]').classList.add("active");
 
-  // Hide all sections
   Object.values(sections).forEach((id) => $("#" + id).classList.remove("active"));
   $("#dept-details").classList.add("active");
 
   $("#title").textContent = "Details — Neon Dashboard";
 }
 
-// ---------------------------------------------
-// Render the full neon details table
-// ---------------------------------------------
 function renderDetailsTable(rows, title) {
   openDetailsTab();
-
   $("#details-title").textContent = title;
 
   const thead = `
@@ -957,9 +830,6 @@ function renderDetailsTable(rows, title) {
     tbody || `<tr><td colspan="9" style="text-align:center;color:#888">No data</td></tr>`;
 }
 
-// ---------------------------------------------
-// CLICK HANDLERS for KPIs
-// ---------------------------------------------
 function attachKpiClickHandlers() {
   $$(".kpi.clickable").forEach((k) => {
     k.onclick = () => {
@@ -1005,10 +875,8 @@ function attachKpiClickHandlers() {
   });
 }
 
-// ---------------------------------------------------------
-// CLICK HANDLERS FOR TABLE ROWS (Sales Rep / GS Rep)
-// ---------------------------------------------------------
 function attachRowClickHandlers() {
+  // SALES REP
   $$("#sales_rep_tbl tbody tr.click-row").forEach((row) => {
     row.onclick = () => {
       const rep = row.dataset.rep;
@@ -1017,6 +885,7 @@ function attachRowClickHandlers() {
     };
   });
 
+  // GS REP
   $$("#gs_rep_tbl tbody tr.click-row").forEach((row) => {
     row.onclick = () => {
       const rep = row.dataset.gs;
@@ -1026,20 +895,82 @@ function attachRowClickHandlers() {
   });
 }
 
-// ---------------------------------------------------------
-// REBUILD — now includes attaching click handlers
-// ---------------------------------------------------------
-const oldBuildAll = buildAll;
-buildAll = function () {
-  oldBuildAll();
+// ===========================================================
+//                NAVIGATION
+// ===========================================================
+const sections = {
+  sales: "dept-sales",
+  gs: "dept-gs",
+  bonus: "dept-bonus",
+  details: "dept-details"
+};
 
-  // attach KPI click events
+$$(".side-btn").forEach((b) => {
+  b.onclick = () => {
+    $$(".side-btn").forEach((x) => x.classList.remove("active"));
+    b.classList.add("active");
+
+    Object.values(sections).forEach((id) => $("#" + id).classList.remove("active"));
+    $("#" + sections[b.dataset.dept]).classList.add("active");
+
+    $("#title").textContent =
+      b.textContent.replace(/[^\w ]+/g, "").trim() + " — Neon Dashboard";
+  };
+});
+
+// Date Filters
+$("#dateBtns").onclick = (e) => {
+  if (!e.target.classList.contains("btn")) return;
+
+  $$("#dateBtns .btn").forEach((x) => x.classList.remove("active"));
+  e.target.classList.add("active");
+
+  RANGE = e.target.dataset.range;
+  CUSTOM = null;
+
+  if (_wb) buildAll();
+};
+
+$("#applyCustom").onclick = () => {
+  const f = $("#from").value;
+  const t = $("#to").value;
+  if (f && t) {
+    CUSTOM = [f, t];
+    $$("#dateBtns .btn").forEach((x) => x.classList.remove("active"));
+    if (_wb) buildAll();
+  }
+};
+
+// OFFICE + SALES REP FILTERS
+$("#officeSel").onchange = (e) => {
+  OFFICE = e.target.value;
+  populateSalesDropdown();
+  if (_wb) buildAll();
+};
+
+$("#salesSel").onchange = (e) => {
+  SALESPERSON = e.target.value;
+  if (_wb) buildAll();
+};
+
+// ===========================================================
+//                MASTER BUILD FUNCTION
+// ===========================================================
+function buildAll() {
+  sales_build();
+  gs_build();
+  bonus_build();
+
+  // DETAILS HANDLERS
   attachKpiClickHandlers();
 
-  // attach row click events
   setTimeout(() => {
     attachRowClickHandlers();
-  }, 50);
-};
+  }, 60);
+}
+
 </script>
+
+</body>
+</html>
 
