@@ -2,975 +2,331 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Sales & GS Neon Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Sales Neon Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ============================================================
-      GLOBAL NEON THEME
-============================================================ */
 body {
   margin: 0;
-  padding: 0;
-  background: #050A1F;
   font-family: 'Poppins', sans-serif;
-  color: #D6E4FF;
+  background: #050A1F;
+  color: #E6EEFF;
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-thumb {
-  background: #0f2a60;
-  border-radius: 5px;
-}
-
-/* ============================================================
-      TOP HEADER
-============================================================ */
-.header {
-  background: rgba(0, 0, 0, 0.35);
-  padding: 18px;
-  text-align: center;
-  font-size: 24px;
-  font-weight: 700;
-  color: #5FB2FF;
-  text-shadow: 0 0 12px #008CFF;
-  border-bottom: 1px solid #0D193D;
-}
-
-#today {
-  color: #8CD2FF;
-  font-size: 14px;
-  margin-top: 5px;
-}
-
-/* ============================================================
-      MAIN CONTAINER
-============================================================ */
+/* LAYOUT */
 .container {
   display: flex;
-  height: calc(100vh - 80px);
-  overflow: hidden;
+  height: 100vh;
 }
 
-/* ============================================================
-      LEFT SIDEBAR
-============================================================ */
+/* SIDEBAR */
 .sidebar {
   width: 220px;
-  background: #07112C;
-  border-right: 1px solid #0B1A40;
-  padding-top: 15px;
+  background: #081026;
+  padding: 20px 10px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
+  border-right: 1px solid #0d1a40;
 }
 
 .side-btn {
-  padding: 14px 18px;
-  margin: 6px 12px;
-  background: #0A1A3A;
+  padding: 12px 10px;
   border-radius: 10px;
-  color: #87BFFF;
-  font-size: 15px;
+  background: #0A1535;
+  color: #AACCFF;
   cursor: pointer;
-  border: 1px solid #0C2A60;
-  transition: 0.3s;
+  border: 1px solid #11245c;
+  transition: 0.25s;
+  text-align: left;
 }
-.side-btn:hover {
-  background: #0F2D60;
-}
+
 .side-btn.active {
-  background: #133B7A;
-  border-color: #1B54A8;
-  color: #A8D3FF;
-  box-shadow: 0 0 12px #007BFF;
+  background: #0e1d4d;
+  border-color: #1d3b99;
+  box-shadow: 0 0 12px #2699ff;
 }
 
-/* ============================================================
-      RIGHT CONTENT AREA
-============================================================ */
-.content {
+/* MAIN PANEL */
+.main {
   flex: 1;
-  overflow-y: auto;
   padding: 25px;
+  overflow-y: auto;
 }
 
-/* ============================================================
-      KPI BOXES
-============================================================ */
-.kpi-row {
+h1 {
+  font-size: 26px;
+  margin-bottom: 20px;
+  color: #9EC5FF;
+  text-shadow: 0 0 12px #007bff;
+}
+
+/* FILTER BAR */
+.filter-row {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-bottom: 25px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.kpi {
-  background: #0A1C45;
-  padding: 18px;
-  border-radius: 14px;
-  width: 180px;
-  border: 1px solid #0D2C60;
-  box-shadow: 0 0 12px #002C7A inset;
+.btn {
+  padding: 8px 15px;
+  background: #0a1535;
+  border: 1px solid #12306A;
+  color: #AACCFF;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn.active {
+  background: #007BFF;
+  border-color: #1a75ff;
+  color: white;
+  box-shadow: 0 0 12px #008cff;
+}
+
+input[type="date"] {
+  padding: 6px 10px;
+  background: #0A1535;
+  border: 1px solid #12306A;
+  color: #AACCFF;
+  border-radius: 6px;
+}
+
+/* KPI CARD */
+.kpi-card {
+  width: 220px;
+  padding: 25px;
+  border-radius: 16px;
+  background: #0A1535;
+  border: 1px solid #1a2f63;
+  box-shadow: 0 0 25px #002a80 inset;
   text-align: center;
-  cursor: default;
-}
-
-.kpi.clickable {
   cursor: pointer;
-}
-.kpi:hover {
-  background: #0E2A60;
+  transition: 0.25s;
 }
 
-.kpi h3 {
-  font-size: 15px;
-  font-weight: 600;
+.kpi-card:hover {
+  box-shadow: 0 0 25px #007bff;
+}
+
+.kpi-title {
+  font-size: 18px;
   margin-bottom: 10px;
-  color: #88C5FF;
-}
-.kpi .big {
-  font-size: 28px;
-  font-weight: 700;
-  color: #4DFF91;
-  text-shadow: 0 0 10px #00FF88;
+  color: #7AB8FF;
 }
 
-/* ============================================================
-      SELECTS & FILTERS
-============================================================ */
-.filters {
-  margin: 20px 0;
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
+.kpi-number {
+  font-size: 42px;
+  font-weight: bold;
+  color: #E6EEFF;
 }
 
-select, input[type="date"] {
-  background: #071733;
-  border: 1px solid #0D2B66;
-  color: #A5CAFF;
-  padding: 7px 10px;
-  border-radius: 8px;
-  font-size: 14px;
-}
-select:focus, input[type="date"]:focus {
-  outline: none;
-  border-color: #1E5AE8;
+/* DETAILS TABLE */
+#details-section {
+  display: none;
 }
 
-/* BUTTON GROUP */
-#dateBtns .btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  background: #0B2047;
-  border: 1px solid #12346A;
-  color: #7AB5FF;
-  margin-right: 10px;
-  cursor: pointer;
-}
-#dateBtns .btn:hover {
-  background: #113066;
-}
-#dateBtns .active {
-  background: #1A4EA0;
-  color: #C9E2FF;
-}
-
-/* ============================================================
-      NEON TABLES
-============================================================ */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 18px;
-  background: #06132B;
-  color: #C7DFFF;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #0B234A;
-  box-shadow: 0 0 14px #001732 inset;
+  margin-top: 20px;
 }
+
+thead {
+  background: #0f234d;
+}
+
 th, td {
-  padding: 12px 14px;
-  font-size: 14px;
-  border-bottom: 1px solid #0A254E;
-}
-th {
-  background: #0C1F44;
-  color: #8CC5FF;
-  text-shadow: 0 0 6px #0077FF;
+  padding: 10px;
+  border-bottom: 1px solid #1b3266;
 }
 
-tr:hover {
-  background: #0E2A55;
-}
-.click-row {
-  cursor: pointer;
-}
-
-/* ============================================================
-      SECTION TITLES
-============================================================ */
-.section-title {
-  font-size: 22px;
-  margin-bottom: 18px;
-  color: #A3CEFF;
-  text-shadow: 0 0 10px #0055FF;
-}
-
-/* CANVAS CHART */
-canvas {
-  background: #061025;
-  border-radius: 12px;
-  padding: 12px;
-  border: 1px solid #0E254E;
-  box-shadow: 0 0 14px #001732 inset;
-  margin-bottom: 30px;
-}
-
-/* HIDDEN SECTIONS */
-.section {
-  display: none;
-}
-.section.active {
-  display: block;
-}
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  Sales & GS Neon Dashboard  
-  <div id="today"></div>
-</div>
-
 <div class="container">
-  <!-- ============================================================
-        SIDEBAR
-  ============================================================ -->
+
+  <!-- SIDEBAR -->
   <div class="sidebar">
-    <div class="side-btn active" data-dept="sales">Sales</div>
-    <div class="side-btn" data-dept="gs">GS</div>
-    <div class="side-btn" data-dept="bonus">Bonus</div>
-    <div class="side-btn" data-dept="details">Details</div>
+    <div class="side-btn active" data-tab="sales">Sales</div>
+    <div class="side-btn" data-tab="details">Details</div>
   </div>
 
-  <!-- ============================================================
-        MAIN CONTENT
-  ============================================================ -->
-  <div class="content">
+  <!-- MAIN PANEL -->
+  <div class="main">
 
-    <!-- ================= SALES SECTION ================= -->
-    <div id="dept-sales" class="section active">
-      <div class="section-title">Sales Overview</div>
+    <h1 id="title">Sales Overview</h1>
 
-      <div class="filters">
-        <select id="officeSel">
-          <option>All</option>
-          <option>Nepal</option>
-          <option>Australia</option>
-        </select>
+    <!-- FILTERS -->
+    <div class="filter-row">
+      <button class="btn active" data-range="all">All</button>
+      <button class="btn" data-range="30">30 Days</button>
+      <button class="btn" data-range="60">60 Days</button>
+      <button class="btn" data-range="90">90 Days</button>
 
-        <select id="salesSel">
-          <option>All</option>
-        </select>
+      <input type="date" id="from">
+      <input type="date" id="to">
+      <button class="btn" id="applyCustom">Apply</button>
+    </div>
 
-        <div id="dateBtns">
-          <span class="btn active" data-range="all">All</span>
-          <span class="btn" data-range="30">30 Days</span>
-          <span class="btn" data-range="60">60 Days</span>
-          <span class="btn" data-range="90">90 Days</span>
-        </div>
+    <!-- SALES OVERVIEW -->
+    <div id="sales-section">
 
-        <div>
-          <input type="date" id="from" />
-          <input type="date" id="to" />
-          <button id="applyCustom" class="btn">Apply</button>
-        </div>
+      <div class="kpi-card" id="assignedCard">
+        <div class="kpi-title">Assigned</div>
+        <div class="kpi-number" id="assignedNum">0</div>
       </div>
 
-      <div id="sales_kpis" class="kpi-row"></div>
+    </div>
 
-      <canvas id="sales_trans_m" height="160"></canvas>
-      <canvas id="sales_coe_m" height="160"></canvas>
+    <!-- DETAILS SECTION -->
+    <div id="details-section">
+      <h1>Details</h1>
 
-      <table id="sales_rep_tbl">
-        <thead></thead>
-        <tbody></tbody>
+      <table>
+        <thead>
+          <tr>
+            <th>Sales Rep</th>
+            <th>Assigned Date</th>
+            <th>GS Lead</th>
+          </tr>
+        </thead>
+        <tbody id="detailsBody"></tbody>
       </table>
     </div>
 
-    <!-- ================== GS SECTION ================== -->
-    <div id="dept-gs" class="section">
-      <div class="section-title">GS Overview</div>
+  </div>
+</div>
+<script>
+const API = "https://salesdashboard.ashishoct34.workers.dev/";
 
-      <div id="gs_kpis" class="kpi-row"></div>
-
-      <canvas id="gs_visa_m" height="160"></canvas>
-
-      <table id="gs_rep_tbl">
-        <thead></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <!-- ================= BONUS SECTION ================= -->
-    <div id="dept-bonus" class="section">
-      <div class="section-title">Bonus</div>
-
-      <select id="bonusQuarterSel"></select>
-      <div id="bonus_kpis" class="kpi-row"></div>
-      <canvas id="bonus_chart" height="160"></canvas>
-    </div>
-
-    <!-- ================= DETAILS SECTION ================= -->
-    <div id="dept-details" class="section">
-      <div class="section-title" id="details-title">Details</div>
-
-      <table id="details_tbl">
-        <thead></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-  </div> <!-- end content -->
-</div> <!-- end container -->
-
-<!-- PART 2 STARTS BELOW (JS ENGINE) --
-   <script>
-// ===========================================================
-//   NEON DASHBOARD — FULL MERGED JAVASCRIPT ENGINE
-// ===========================================================
-
-// TODAY DATE
-document.getElementById("today").textContent =
-  new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-
-// API ENDPOINT
-const API_URL = "https://salesdashboard.ashishoct34.workers.dev/";
-
-// GLOBAL STATE
-let _wb = null;
+let RAW_ROWS = [];
 let RANGE = "all";
 let CUSTOM = null;
-let OFFICE = "All";
-let SALESPERSON = "All";
-let BONUS_Q = null;
 
-// UTILITIES
-const fmt = new Intl.NumberFormat("en-IN");
-const num = (n) => (isFinite(n) ? fmt.format(Math.round(n)) : "—");
-const lc = (s) => (s || "").toString().trim().toLowerCase();
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => Array.from(document.querySelectorAll(sel));
-
-// DATE PARSE
-function toDate(v) {
+// HELPERS
+const toDate = v => {
   if (!v) return null;
-  if (v instanceof Date) return isNaN(v) ? null : v;
-  const d = new Date(String(v).trim());
+  const d = new Date(v);
   return isNaN(d) ? null : d;
+};
+const fmt = n => new Intl.NumberFormat("en-IN").format(n);
+
+// LOAD API
+async function loadAPI() {
+  const res = await fetch(API);
+  const json = await res.json();
+  RAW_ROWS = [];
+
+  Object.values(json.data).forEach(arr => {
+    arr.forEach(r => {
+      RAW_ROWS.push({
+        salesRep: r["Sales Rep"] || "",
+        assigned: toDate(r["Assigned Date"]),
+        gsLead: r["GS Lead"] || ""
+      });
+    });
+  });
+
+  buildAssigned();
 }
 
-const ymon = (d) =>
-  d instanceof Date && !isNaN(d)
-    ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
-    : "";
+window.onload = loadAPI;
 
-const quarterKey = (d) =>
-  d instanceof Date && !isNaN(d)
-    ? `${d.getFullYear()}-Q${Math.floor(d.getMonth() / 3) + 1}`
-    : "";
-
-// DATE RANGE FILTER
+// FILTER LOGIC
 function inRange(d, today) {
-  if (!(d instanceof Date) || isNaN(d) || d > today) return false;
+  if (!d) return false;
+
   if (CUSTOM) {
-    const fd = new Date(CUSTOM[0] + "T00:00:00");
-    const td = new Date(CUSTOM[1] + "T23:59:59");
-    return d >= fd && d <= td;
+    const f = new Date(CUSTOM[0]);
+    const t = new Date(CUSTOM[1]);
+    return d >= f && d <= t;
   }
+
   if (RANGE === "all") return true;
 
-  const n = +RANGE;
+  const n = Number(RANGE);
   const start = new Date(today);
-  start.setDate(today.getDate() - n + 1);
+  start.setDate(today.getDate() - n);
   return d >= start && d <= today;
 }
 
-function filterByDate(rows, field) {
+// BUILD ASSIGNED CARD
+function buildAssigned() {
   const today = new Date();
-  return rows.filter((r) => r[field] instanceof Date && inRange(r[field], today));
+
+  const assigned = RAW_ROWS.filter(r =>
+    r.assigned && inRange(r.assigned, today)
+  );
+
+  document.getElementById("assignedNum").textContent = fmt(assigned.length);
+
+  // CLICK → DETAILS
+  document.getElementById("assignedCard").onclick = () => showDetails(assigned);
 }
 
-// ===========================================================
-//           API LOAD + NORMALIZE WORKBOOK
-// ===========================================================
-async function loadFromAPI() {
-  try {
-    $("#hint").textContent = "Fetching from Cloudflare API...";
+// DETAILS PAGE
+function showDetails(rows) {
+  document.getElementById("sales-section").style.display = "none";
+  document.getElementById("details-section").style.display = "block";
+  document.getElementById("title").textContent = "Details";
 
-    const res = await fetch(API_URL);
-    const json = await res.json();
-    const data = json.data;
-
-    // ORGANIZE INTO WORKBOOK
-    _wb = {
-      Sweta: data.Sweta || [],
-      Anusha: data.Anusha || [],
-      Kumkum: data.Kumkum || []
-    };
-
-    $("#hint").textContent = "Loaded Successfully.";
-
-    populateSalesDropdown();
-    rebuildQuarterDropdown();
-    buildAll();
-
-  } catch (e) {
-    console.log(e);
-    $("#hint").textContent = "API ERROR: " + e.message;
-  }
+  const TB = document.getElementById("detailsBody");
+  TB.innerHTML = rows
+    .map(r => `
+      <tr>
+        <td>${r.salesRep}</td>
+        <td>${r.assigned ? r.assigned.toLocaleDateString("en-GB") : ""}</td>
+        <td>${r.gsLead}</td>
+      </tr>
+    `)
+    .join("");
 }
 
-window.onload = loadFromAPI;
+// NAVIGATION
+document.querySelectorAll(".side-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".side-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
 
-// FIELD MAPPING
-const H = {
-  office: ["Assigned Office", "Office"],
-  salesRep: ["Sales Rep", "Sales Representative"],
-  gsRep: ["GS Lead", "GS Officer"],
-  assignee: ["Assignee"],
-  assigned: ["Assigned Date"],
-
-  tgs: ["Transferred to GS Date"],    // column I
-  coe: ["COE Obtained Date"],         // column K
-  lodged: ["Visa Lodged Date"],       // column L
-  visa: ["Visa Obtained Date"],       // column M
-
-  reason: ["Reason if Reverted"]
-};
-
-// FUZZY FIELD MATCHING
-function fuzzyKey(row, arr) {
-  const want = Array.isArray(arr) ? arr : [arr];
-  const keys = Object.keys(row);
-
-  for (const w of want) {
-    const k = keys.find((x) => lc(x) === lc(w));
-    if (k) return k;
-  }
-
-  for (const w of want) {
-    const toks = lc(w).split(/\s+/);
-    for (const k of keys) {
-      const kl = lc(k);
-      if (toks.every((t) => kl.includes(t))) return k;
+    if (btn.dataset.tab === "sales") {
+      document.getElementById("sales-section").style.display = "block";
+      document.getElementById("details-section").style.display = "none";
+      document.getElementById("title").textContent = "Sales Overview";
     }
-  }
-  return null;
-}
-
-function pick(row, list) {
-  const k = fuzzyKey(row, list);
-  return k ? row[k] : null;
-}
-
-function normalizeOffice(v) {
-  const s = lc(v);
-  if (s.includes("aus")) return "Australia";
-  if (s.includes("nepal") || s.includes("np")) return "Nepal";
-  return s ? s[0].toUpperCase() + s.slice(1) : "";
-}
-
-// ===========================================================
-//                  BUILD UNIFIED ROWS
-// ===========================================================
-function allRows() {
-  const acc = [];
-
-  Object.values(_wb || {}).forEach((arr) => {
-    (arr || []).forEach((r) => {
-      const office = normalizeOffice(pick(r, H.office));
-      if (OFFICE !== "All" && office !== OFFICE) return;
-
-      const salesRep = (pick(r, H.salesRep) || "").trim() || "Unassigned";
-      if (SALESPERSON !== "All" && salesRep !== SALESPERSON) return;
-
-      acc.push({
-        office,
-        salesRep,
-        gsRep: (pick(r, H.gsRep) || "").trim() || "Unassigned",
-        assignee: pick(r, H.assignee),
-
-        assigned: toDate(pick(r, H.assigned)),
-        tgs: toDate(pick(r, H.tgs)),
-        coe: toDate(pick(r, H.coe)),
-        lodged: toDate(pick(r, H.lodged)),
-        visa: toDate(pick(r, H.visa)),
-
-        reverted: Boolean(pick(r, H.reason))
-      });
-    });
-  });
-
-  return acc;
-}
-
-// ===========================================================
-//              INITIAL DROPDOWNS
-// ===========================================================
-function populateSalesDropdown() {
-  const reps = new Set();
-
-  Object.values(_wb || {}).forEach((arr) => {
-    (arr || []).forEach((r) => {
-      const office = normalizeOffice(pick(r, H.office));
-      if (OFFICE !== "All" && office !== OFFICE) return;
-
-      const s = (pick(r, H.salesRep) || "").trim();
-      if (s) reps.add(s);
-    });
-  });
-
-  const sel = $("#salesSel");
-  const current = sel.value;
-  sel.innerHTML = ["All", ...Array.from(reps).sort()]
-    .map((n) => `<option ${n === current ? "selected" : ""}>${n}</option>`)
-    .join("");
-}
-
-function rebuildQuarterDropdown() {
-  const setQ = new Set();
-
-  Object.values(_wb || {}).forEach((arr) => {
-    arr.forEach((r) => {
-      ["coe", "lodged", "visa"].forEach((k) => {
-        const d = toDate(pick(r, H[k]));
-        if (d) setQ.add(quarterKey(d));
-      });
-    });
-  });
-
-  const list = [...setQ].filter(Boolean).sort();
-  $("#bonusQuarterSel").innerHTML =
-    `<option value="">Latest</option>` +
-    list.map((q) => `<option>${q}</option>`).join("");
-}
-
-// ===========================================================
-//                   SALES SECTION
-// ===========================================================
-let SCharts = { t: null, c: null };
-
-function sales_build() {
-  const rows = allRows();
-
-  const assigned = filterByDate(rows.filter((r) => r.assignee), "assigned");
-  const reverted = filterByDate(rows.filter((r) => r.reverted), "assigned");
-  const accepted = assigned.length - reverted.length;
-
-  const transferred = filterByDate(rows.filter((r) => r.tgs), "tgs");
-  const coes = filterByDate(rows.filter((r) => r.coe), "coe");
-
-  $("#sales_kpis").innerHTML = `
-    <div class="kpi clickable" data-detail="assigned"><h3>Assigned</h3><div class="big">${num(assigned.length)}</div></div>
-    <div class="kpi clickable" data-detail="accepted"><h3>Accepted</h3><div class="big">${num(accepted)}</div></div>
-    <div class="kpi clickable" data-detail="reverted"><h3>Reverted</h3><div class="big">${num(reverted.length)}</div></div>
-    <div class="kpi clickable" data-detail="transferred"><h3>Transferred</h3><div class="big">${num(transferred.length)}</div></div>
-    <div class="kpi clickable" data-detail="coe"><h3>COEs</h3><div class="big">${num(coes.length)}</div></div>
-    <div class="kpi"><h3>COE Rate</h3><div class="big">${assigned.length ? ((coes.length / assigned.length) * 100).toFixed(1) : "0.0"}%</div></div>
-  `;
-
-  // MONTHLY TRANSFERS
-  const byM_T = {};
-  transferred.forEach((r) => {
-    const k = ymon(r.tgs);
-    byM_T[k] = (byM_T[k] || 0) + 1;
-  });
-
-  // MONTHLY COEs
-  const byM_C = {};
-  coes.forEach((r) => {
-    const k = ymon(r.coe);
-    byM_C[k] = (byM_C[k] || 0) + 1;
-  });
-
-  const months = [...new Set([...Object.keys(byM_T), ...Object.keys(byM_C)])].sort();
-
-  if (SCharts.t) SCharts.t.destroy();
-  SCharts.t = new Chart($("#sales_trans_m"), {
-    type: "bar",
-    data: {
-      labels: months,
-      datasets: [
-        { label: "Transfers", data: months.map((k) => byM_T[k] || 0), backgroundColor: "#4DB7FF" }
-      ]
-    },
-    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
-  });
-
-  if (SCharts.c) SCharts.c.destroy();
-  SCharts.c = new Chart($("#sales_coe_m"), {
-    type: "bar",
-    data: {
-      labels: months,
-      datasets: [
-        { label: "COEs", data: months.map((k) => byM_C[k] || 0), backgroundColor: "#4DFF91" }
-      ]
-    },
-    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
-  });
-
-  renderSalesRepTable(rows);
-}
-
-// SALES REP TABLE
-function renderSalesRepTable(rows) {
-  const by = {};
-  rows.forEach((r) => {
-    const k = r.salesRep;
-    by[k] ??= { office: r.office, assigned: 0, reverted: 0, transferred: 0, coe: 0 };
-
-    if (r.assignee) by[k].assigned++;
-    if (r.reverted) by[k].reverted++;
-    if (r.tgs) by[k].transferred++;
-    if (r.coe) by[k].coe++;
-  });
-
-  $("#sales_rep_tbl thead").innerHTML = `
-    <tr>
-      <th>Sales</th>
-      <th>Office</th>
-      <th>Assigned</th>
-      <th>Reverted</th>
-      <th>Accepted</th>
-      <th>Transferred</th>
-      <th>COE</th>
-      <th>Rate</th>
-      <th>Status</th>
-    </tr>`;
-
-  $("#sales_rep_tbl tbody").innerHTML = Object.entries(by)
-    .map(([rep, o]) => {
-      const accepted = o.assigned - o.reverted;
-      const rate = o.assigned ? ((o.coe / o.assigned) * 100).toFixed(1) : "0.0";
-      const st = rate >= 50 ? "OK" : "LOW";
-
-      return `
-        <tr class="click-row" data-rep="${rep}">
-          <td><b>${rep}</b></td>
-          <td>${o.office}</td>
-          <td>${num(o.assigned)}</td>
-          <td>${num(o.reverted)}</td>
-          <td>${num(accepted)}</td>
-          <td>${num(o.transferred)}</td>
-          <td>${num(o.coe)}</td>
-          <td>${rate}%</td>
-          <td>${st}</td>
-        </tr>`;
-    })
-    .join("");
-}
-
-// ===========================================================
-//                    GS SECTION
-// ===========================================================
-let GCharts = { visa: null };
-
-function gs_build() {
-  const rows = allRows();
-
-  const tgs = filterByDate(rows.filter((r) => r.tgs), "tgs");
-  const coe = filterByDate(rows.filter((r) => r.coe), "coe");
-  const lodged = filterByDate(rows.filter((r) => r.lodged), "lodged");
-  const visa = filterByDate(rows.filter((r) => r.visa), "visa");
-
-  const rate = lodged.length ? ((visa.length / lodged.length) * 100).toFixed(1) : "0.0";
-
-  $("#gs_kpis").innerHTML = `
-    <div class="kpi clickable" data-detail="tgs"><h3>Transfers</h3><div class="big">${num(tgs.length)}</div></div>
-    <div class="kpi clickable" data-detail="coe"><h3>COEs</h3><div class="big">${num(coe.length)}</div></div>
-    <div class="kpi clickable" data-detail="lodged"><h3>Lodged</h3><div class="big">${num(lodged.length)}</div></div>
-    <div class="kpi clickable" data-detail="visa"><h3>Visa Granted</h3><div class="big">${num(visa.length)}</div></div>
-    <div class="kpi"><h3>Grant Rate</h3><div class="big">${rate}%</div></div>
-  `;
-
-  const m = {};
-  visa.forEach((r) => {
-    const k = ymon(r.visa);
-    m[k] = (m[k] || 0) + 1;
-  });
-
-  const labels = Object.keys(m).sort();
-
-  if (GCharts.visa) GCharts.visa.destroy();
-  GCharts.visa = new Chart($("#gs_visa_m"), {
-    type: "bar",
-    data: {
-      labels,
-      datasets: [
-        { label: "Visa", data: labels.map((k) => m[k]), backgroundColor: "#4DFF91" }
-      ]
-    },
-    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
-  });
-
-  renderGSRepTable(rows);
-}
-
-function renderGSRepTable(rows) {
-  const by = {};
-
-  rows.forEach((r) => {
-    const k = r.gsRep;
-    by[k] ??= { assigned: 0, coe: 0, lodged: 0, visa: 0 };
-    if (r.tgs) by[k].assigned++;
-    if (r.coe) by[k].coe++;
-    if (r.lodged) by[k].lodged++;
-    if (r.visa) by[k].visa++;
-  });
-
-  $("#gs_rep_tbl thead").innerHTML = `
-    <tr>
-      <th>GS Rep</th>
-      <th>Assigned</th>
-      <th>COE</th>
-      <th>Lodged</th>
-      <th>Visa</th>
-      <th>Rate</th>
-    </tr>`;
-
-  $("#gs_rep_tbl tbody").innerHTML = Object.entries(by)
-    .map(([rep, o]) => {
-      const rate = o.lodged ? ((o.visa / o.lodged) * 100).toFixed(1) : 0;
-
-      return `
-        <tr class="click-row" data-gs="${rep}">
-          <td><b>${rep}</b></td>
-          <td>${num(o.assigned)}</td>
-          <td>${num(o.coe)}</td>
-          <td>${num(o.lodged)}</td>
-          <td>${num(o.visa)}</td>
-          <td>${rate}%</td>
-        </tr>`;
-    })
-    .join("");
-}
-
-// ===========================================================
-//                    BONUS SECTION
-// ===========================================================
-function bonus_build() {
-  // Placeholder (your logic can go here later)
-}
-
-// ===========================================================
-//                    DETAILS TAB ENGINE
-// ===========================================================
-function openDetailsTab() {
-  $$(".side-btn").forEach((x) => x.classList.remove("active"));
-  document.querySelector('[data-dept="details"]').classList.add("active");
-
-  Object.values(sections).forEach((id) => $("#" + id).classList.remove("active"));
-  $("#dept-details").classList.add("active");
-
-  $("#title").textContent = "Details — Neon Dashboard";
-}
-
-function renderDetailsTable(rows, title) {
-  openDetailsTab();
-  $("#details-title").textContent = title;
-
-  const thead = `
-    <tr>
-      <th>Office</th>
-      <th>Sales Rep</th>
-      <th>GS Rep</th>
-      <th>Assigned Date</th>
-      <th>Transferred</th>
-      <th>COE Date</th>
-      <th>Lodged</th>
-      <th>Visa</th>
-      <th>Reverted?</th>
-    </tr>
-  `;
-
-  const tbody = rows
-    .map((r) => {
-      const d = (x) =>
-        x instanceof Date && !isNaN(x)
-          ? x.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-          : "";
-
-      return `
-        <tr>
-          <td>${r.office}</td>
-          <td>${r.salesRep}</td>
-          <td>${r.gsRep}</td>
-          <td>${d(r.assigned)}</td>
-          <td>${d(r.tgs)}</td>
-          <td>${d(r.coe)}</td>
-          <td>${d(r.lodged)}</td>
-          <td>${d(r.visa)}</td>
-          <td>${r.reverted ? "Yes" : ""}</td>
-        </tr>
-      `;
-    })
-    .join("");
-
-  $("#details_tbl thead").innerHTML = thead;
-  $("#details_tbl tbody").innerHTML =
-    tbody || `<tr><td colspan="9" style="text-align:center;color:#888">No data</td></tr>`;
-}
-
-function attachKpiClickHandlers() {
-  $$(".kpi.clickable").forEach((k) => {
-    k.onclick = () => {
-      const type = k.dataset.detail;
-      const rows = allRows();
-
-      let filtered = [];
-
-      switch (type) {
-        case "assigned":
-          filtered = filterByDate(rows.filter((r) => r.assignee), "assigned");
-          break;
-
-        case "accepted":
-          const assigned = filterByDate(rows.filter((r) => r.assignee), "assigned");
-          const reverted = filterByDate(rows.filter((r) => r.reverted), "assigned");
-          filtered = assigned.filter((x) => !x.reverted);
-          break;
-
-        case "reverted":
-          filtered = filterByDate(rows.filter((r) => r.reverted), "assigned");
-          break;
-
-        case "transferred":
-          filtered = filterByDate(rows.filter((r) => r.tgs), "tgs");
-          break;
-
-        case "coe":
-          filtered = filterByDate(rows.filter((r) => r.coe), "coe");
-          break;
-
-        case "lodged":
-          filtered = filterByDate(rows.filter((r) => r.lodged), "lodged");
-          break;
-
-        case "visa":
-          filtered = filterByDate(rows.filter((r) => r.visa), "visa");
-          break;
-      }
-
-      renderDetailsTable(filtered, "Details — " + type.toUpperCase());
-    };
-  });
-}
-
-function attachRowClickHandlers() {
-  // SALES REP
-  $$("#sales_rep_tbl tbody tr.click-row").forEach((row) => {
-    row.onclick = () => {
-      const rep = row.dataset.rep;
-      const rows = allRows().filter((r) => r.salesRep === rep);
-      renderDetailsTable(rows, "Sales Rep — " + rep);
-    };
-  });
-
-  // GS REP
-  $$("#gs_rep_tbl tbody tr.click-row").forEach((row) => {
-    row.onclick = () => {
-      const rep = row.dataset.gs;
-      const rows = allRows().filter((r) => r.gsRep === rep);
-      renderDetailsTable(rows, "GS Rep — " + rep);
-    };
-  });
-}
-
-// ===========================================================
-//                NAVIGATION
-// ===========================================================
-const sections = {
-  sales: "dept-sales",
-  gs: "dept-gs",
-  bonus: "dept-bonus",
-  details: "dept-details"
-};
-
-$$(".side-btn").forEach((b) => {
-  b.onclick = () => {
-    $$(".side-btn").forEach((x) => x.classList.remove("active"));
-    b.classList.add("active");
-
-    Object.values(sections).forEach((id) => $("#" + id).classList.remove("active"));
-    $("#" + sections[b.dataset.dept]).classList.add("active");
-
-    $("#title").textContent =
-      b.textContent.replace(/[^\w ]+/g, "").trim() + " — Neon Dashboard";
+    if (btn.dataset.tab === "details") {
+      document.getElementById("sales-section").style.display = "none";
+      document.getElementById("details-section").style.display = "block";
+      document.getElementById("title").textContent = "Details";
+    }
   };
 });
 
-// Date Filters
-$("#dateBtns").onclick = (e) => {
-  if (!e.target.classList.contains("btn")) return;
+// DATE FILTER BUTTONS
+document.querySelectorAll(".btn[data-range]").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".btn[data-range]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
 
-  $$("#dateBtns .btn").forEach((x) => x.classList.remove("active"));
-  e.target.classList.add("active");
+    RANGE = btn.dataset.range;
+    CUSTOM = null;
+    buildAssigned();
+  };
+});
 
-  RANGE = e.target.dataset.range;
-  CUSTOM = null;
-
-  if (_wb) buildAll();
-};
-
-$("#applyCustom").onclick = () => {
-  const f = $("#from").value;
-  const t = $("#to").value;
+// CUSTOM DATE
+document.getElementById("applyCustom").onclick = () => {
+  const f = document.getElementById("from").value;
+  const t = document.getElementById("to").value;
   if (f && t) {
     CUSTOM = [f, t];
-    $$("#dateBtns .btn").forEach((x) => x.classList.remove("active"));
-    if (_wb) buildAll();
+    document.querySelectorAll(".btn[data-range]").forEach(b => b.classList.remove("active"));
+    buildAssigned();
   }
 };
-
-// OFFICE + SALES REP FILTERS
-$("#officeSel").onchange = (e) => {
-  OFFICE = e.target.value;
-  populateSalesDropdown();
-  if (_wb) buildAll();
-};
-
-$("#salesSel").onchange = (e) => {
-  SALESPERSON = e.target.value;
-  if (_wb) buildAll();
-};
-
-// ===========================================================
-//                MASTER BUILD FUNCTION
-// ===========================================================
-function buildAll() {
-  sales_build();
-  gs_build();
-  bonus_build();
-
-  // DETAILS HANDLERS
-  attachKpiClickHandlers();
-
-  setTimeout(() => {
-    attachRowClickHandlers();
-  }, 60);
-}
-
 </script>
 
-</body>
-</html>
-
+</body></html>
