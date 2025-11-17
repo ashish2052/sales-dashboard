@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <title>Sales & GS Neon Dashboard</title>
+
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -54,6 +56,30 @@ body {
     padding: 20px;
 }
 
+/* SUB-TABS (HORIZONTAL) */
+.subtabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.subtab-btn {
+    padding: 10px 20px;
+    background: #0f1d33;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #8cbaff;
+    transition: 0.2s;
+    font-size: 14px;
+    border: 1px solid #112544;
+}
+
+.subtab-btn.active {
+    background: #0a56ff;
+    color: #fff;
+    box-shadow: 0 0 12px #0a56ff;
+}
+
 /* CARDS */
 .cards, .rep-cards, .gs-cards {
     display: flex;
@@ -78,28 +104,18 @@ body {
     transform: translateY(-4px);
 }
 
-.card h2, .rep-card h2, .gs-card h2 {
+.card h2, .gs-card h2, .rep-card h2 {
     margin: 0;
     font-size: 34px;
     font-weight: 600;
 }
 
-.tab-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 15px;
-}
-
-.tab-btn {
-    padding: 10px 20px;
-    background: #0f1d33;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.tab-btn.active {
-    background: #0a56ff;
-    box-shadow: 0 0 12px #0a56ff;
+/* TITLES */
+.section-title {
+    margin-top: 30px;
+    font-size: 22px;
+    color: #8cbaff;
+    text-shadow: 0 0 8px #004cff;
 }
 
 /* TABLE */
@@ -125,11 +141,19 @@ td {
     color: #dce6ff;
 }
 
-.section-title {
-    margin-top: 30px;
-    font-size: 22px;
-    color: #8cbaff;
-    text-shadow: 0 0 8px #004cff;
+/* CHART ROW (2 per row) */
+.chart-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.chart-box {
+    width: 48%;
+    background: #0f1d33;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 18px rgba(0,100,255,0.2);
 }
 
 .stuck-box {
@@ -147,8 +171,7 @@ td {
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-    <div class="side-btn active" data-tab="overview">Sales Overview</div>
-    <div class="side-btn" data-tab="salesrep">Sales Rep</div>
+    <div class="side-btn active" data-tab="sales">Sales</div>
     <div class="side-btn" data-tab="gs">GS Performance</div>
     <div class="side-btn" data-tab="details">Details</div>
 </div>
@@ -157,138 +180,176 @@ td {
 
 <div class="content">
 
-<!-- ================================================ -->
-<!-- SALES OVERVIEW SECTION -->
-<!-- ================================================ -->
-<div id="overview-section">
+<!-- SALES SECTION (has subtabs) -->
+<div id="sales-section">
 
-    <div class="cards">
-        <div class="card" id="assignedCard">
-            <div>Assigned</div>
-            <h2 id="assignedCount">0</h2>
-        </div>
-
-        <div class="card" id="acceptedCard">
-            <div>Accepted</div>
-            <h2 id="acceptedCount">0</h2>
-        </div>
-
-        <div class="card" id="revertedCard">
-            <div>Reverted</div>
-            <h2 id="revertedCount">0</h2>
-        </div>
-
-        <div class="card" id="transferredCard">
-            <div>Transferred to GS</div>
-            <h2 id="transferredCount">0</h2>
-        </div>
-
-        <div class="card" id="coeCard">
-            <div>COE</div>
-            <h2 id="coeCount">0</h2>
-        </div>
+    <div class="subtabs">
+        <div class="subtab-btn active" data-sub="sales-overview">Sales Overview</div>
+        <div class="subtab-btn" data-sub="sales-rep">Sales Rep</div>
     </div>
 
-    <h3 class="section-title">Assigned Trend</h3>
-    <canvas id="assignedChart" height="120"></canvas>
+    <!-- SALES OVERVIEW -->
+    <div id="sales-overview-tab">
+        <div class="cards">
+            <div class="card" id="assignedCard">
+                <div>Assigned</div>
+                <h2 id="assignedCount">0</h2>
+            </div>
+
+            <div class="card" id="acceptedCard">
+                <div>Accepted</div>
+                <h2 id="acceptedCount">0</h2>
+            </div>
+
+            <div class="card" id="revertedCard">
+                <div>Reverted</div>
+                <h2 id="revertedCount">0</h2>
+            </div>
+
+            <div class="card" id="transferredCard">
+                <div>Transferred to GS</div>
+                <h2 id="transferredCount">0</h2>
+            </div>
+
+            <div class="card" id="coeCard">
+                <div>COE</div>
+                <h2 id="coeCount">0</h2>
+            </div>
+        </div>
+
+        <h3 class="section-title">Assigned Trend</h3>
+        <canvas id="assignedChart" height="120"></canvas>
+    </div>
+
+    <!-- SALES REP TAB -->
+    <div id="sales-rep-tab" style="display:none;">
+        <h3 class="section-title">Sales Rep Performance</h3>
+        <div class="rep-cards" id="repCards"></div>
+
+        <div class="chart-row">
+            <div class="chart-box">
+                <h3 style="color:#8cbaff;font-size:18px;">Assigned vs Accepted</h3>
+                <canvas id="repBar1" height="140"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3 style="color:#8cbaff;font-size:18px;">Transferred vs COE</h3>
+                <canvas id="repBar2" height="140"></canvas>
+            </div>
+        </div>
+    </div>
 
 </div>
 
 <!-- END PART A -->
-<!-- ================================================ -->
-<!-- SALES REP SECTION -->
-<!-- ================================================ -->
-<div id="salesrep-section" style="display:none;">
-
-    <h3 class="section-title">Sales Rep Performance</h3>
-    <div class="rep-cards" id="repCards"></div>
-
-    <h3 class="section-title">Assigned vs Accepted (Per Rep)</h3>
-    <canvas id="repBar1" height="140"></canvas>
-
-    <h3 class="section-title">Transferred vs COE (Per Rep)</h3>
-    <canvas id="repBar2" height="140"></canvas>
-
-</div>
-
-
-<!-- ================================================ -->
-<!-- GS PERFORMANCE SECTION -->
-<!-- ================================================ -->
+<!-- ========================================================== -->
+<!-- GS PERFORMANCE SECTION (with subtabs) -->
+<!-- ========================================================== -->
 <div id="gs-section" style="display:none;">
 
-    <h3 class="section-title">GS Performance</h3>
+    <div class="subtabs">
+        <div class="subtab-btn active" data-sub="gs-overview">GS Overview</div>
+        <div class="subtab-btn" data-sub="gs-alerts">Alerts</div>
+    </div>
 
-    <div class="gs-cards">
+    <!-- ===================== -->
+    <!-- GS OVERVIEW TAB -->
+    <!-- ===================== -->
+    <div id="gs-overview-tab">
 
-        <div class="gs-card" id="gsTransferredCard">
-            <div>Transferred to GS</div>
-            <h2 id="gsTransferredCount">0</h2>
+        <h3 class="section-title">GS Performance</h3>
+
+        <div class="gs-cards">
+
+            <div class="gs-card" id="gsTransferredCard">
+                <div>Transferred to GS</div>
+                <h2 id="gsTransferredCount">0</h2>
+            </div>
+
+            <div class="gs-card" id="gsOfferCard">
+                <div>Full Offers</div>
+                <h2 id="gsOfferCount">0</h2>
+            </div>
+
+            <div class="gs-card" id="gsCOECard">
+                <div>COE</div>
+                <h2 id="gsCOECount">0</h2>
+            </div>
+
+            <div class="gs-card" id="gsLodgedCard">
+                <div>Visa Lodged</div>
+                <h2 id="gsLodgedCount">0</h2>
+            </div>
+
+            <div class="gs-card" id="gsObtainedCard">
+                <div>Visa Obtained</div>
+                <h2 id="gsObtainedCount">0</h2>
+            </div>
+
         </div>
 
-        <div class="gs-card" id="gsOfferCard">
-            <div>Full Offers</div>
-            <h2 id="gsOfferCount">0</h2>
+        <!-- GS Duration KPIs -->
+        <h3 class="section-title">GS Duration KPIs</h3>
+        <div class="gs-cards" id="gsDurationCards"></div>
+
+        <!-- GS Funnel + GS Lead Charts -->
+        <div class="chart-row">
+
+            <div class="chart-box">
+                <h3 style="color:#8cbaff;font-size:18px;">GS Pipeline Funnel</h3>
+                <canvas id="gsFunnel" height="140"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3 style="color:#8cbaff;font-size:18px;">GS Lead Stage Completion</h3>
+                <canvas id="gsBar1" height="140"></canvas>
+            </div>
+
         </div>
 
-        <div class="gs-card" id="gsCOECard">
-            <div>COE</div>
-            <h2 id="gsCOECount">0</h2>
-        </div>
+        <div class="chart-row">
 
-        <div class="gs-card" id="gsLodgedCard">
-            <div>Visa Lodged</div>
-            <h2 id="gsLodgedCount">0</h2>
-        </div>
+            <div class="chart-box">
+                <h3 style="color:#8cbaff;font-size:18px;">Avg Duration (Transfer → Offer)</h3>
+                <canvas id="gsBar2" height="140"></canvas>
+            </div>
 
-        <div class="gs-card" id="gsObtainedCard">
-            <div>Visa Obtained</div>
-            <h2 id="gsObtainedCount">0</h2>
+            <div class="chart-box">
+                <h3 style="color:#8cbaff;font-size:18px;">GS Lead Performance</h3>
+                <div id="gsLeadCards" class="gs-cards"></div>
+            </div>
+
         </div>
 
     </div>
 
-    <!-- GS Duration KPIs -->
-    <h3 class="section-title">GS Duration KPIs</h3>
-    <div class="gs-cards" id="gsDurationCards"></div>
+    <!-- ===================== -->
+    <!-- GS ALERTS TAB -->
+    <!-- ===================== -->
+    <div id="gs-alerts-tab" style="display:none;">
+        <h3 class="section-title">Alerts — Stuck Cases</h3>
 
-    <!-- GS Funnel -->
-    <h3 class="section-title">GS Pipeline Funnel</h3>
-    <canvas id="gsFunnel" height="140"></canvas>
-
-    <!-- GS Lead Comparison -->
-    <h3 class="section-title">GS Lead Performance</h3>
-    <div class="gs-cards" id="gsLeadCards"></div>
-
-    <!-- GS Comparison Charts -->
-    <h3 class="section-title">GS Stage Completion Comparison</h3>
-    <canvas id="gsBar1" height="140"></canvas>
-
-    <h3 class="section-title">GS Average Durations (Per GS Lead)</h3>
-    <canvas id="gsBar2" height="140"></canvas>
-
-    <!-- Stuck Cases -->
-    <h3 class="section-title">Stuck Cases</h3>
-    <div class="stuck-box">
-        <table>
-            <thead>
-                <tr>
-                    <th>Client Name</th>
-                    <th>GS Lead</th>
-                    <th>Stage Stuck At</th>
-                    <th>Days Waiting</th>
-                </tr>
-            </thead>
-            <tbody id="stuckBody"></tbody>
-        </table>
+        <div class="stuck-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client Name</th>
+                        <th>GS Lead</th>
+                        <th>Stage Stuck At</th>
+                        <th>Days Waiting</th>
+                    </tr>
+                </thead>
+                <tbody id="alertsStuckBody"></tbody>
+            </table>
+        </div>
     </div>
 
 </div>
 
 
-<!-- ================================================ -->
+<!-- ========================================================== -->
 <!-- DETAILS SECTION -->
-<!-- ================================================ -->
+<!-- ========================================================== -->
 <div id="details-section" style="display:none;">
 
     <h3 class="section-title">Details</h3>
@@ -318,12 +379,11 @@ td {
 
 const API = "https://salesdashboard.ashishoct34.workers.dev/";
 
-let MASTER = [];      // full dataset
-let FILTERED = [];    // filtered rows for Details tab
-
+let MASTER = [];
+let FILTERED = [];
 
 /* ------------------------------------------------------------- */
-/*  UTIL: DATE parsing                                           */
+/* DATE PARSER */
 /* ------------------------------------------------------------- */
 function toDate(v){
     if(!v || v.trim()==="") return "";
@@ -331,14 +391,20 @@ function toDate(v){
     return isNaN(d) ? "" : d;
 }
 
+function daysBetween(a,b){
+    if(!a || !b || a==="INVALID" || b==="INVALID") return "";
+    return Math.round((b-a)/(1000*60*60*24));
+}
+
 /* ------------------------------------------------------------- */
-/*  LOAD DATA FROM API                                           */
+/* LOAD DATA */
 /* ------------------------------------------------------------- */
-async function loadData() {
+async function loadData(){
     const res = await fetch(API);
     const json = await res.json();
 
     MASTER = [];
+
     Object.values(json.data).forEach(rows=>{
         rows.forEach(r=>{
             MASTER.push({
@@ -361,39 +427,33 @@ async function loadData() {
     updateGS();
 }
 
-
 /* ------------------------------------------------------------- */
-/*  SALES OVERVIEW                                               */
+/* SALES — OVERVIEW */
 /* ------------------------------------------------------------- */
 function updateSalesOverview(){
 
-    const assigned = MASTER.filter(r => r.assigned !== "");
-    const reverted = assigned.filter(r => r.reason.trim() !== "");
-    const accepted = assigned.filter(r => r.reason.trim() === "");
-    const transferred = assigned.filter(r => r.transferred !== "");
-    const coe = assigned.filter(r => r.coe !== "");
+    const assigned = MASTER.filter(r=>r.assigned!=="");
+    const reverted = assigned.filter(r=>r.reason.trim()!=="");
+    const accepted = assigned.filter(r=>r.reason.trim()==="");
+    const transferred = assigned.filter(r=>r.transferred!=="");
+    const coe = assigned.filter(r=>r.coe!=="");
 
-    /* SET CARD VALUES */
     document.getElementById("assignedCount").textContent = assigned.length;
     document.getElementById("acceptedCount").textContent = accepted.length;
     document.getElementById("revertedCount").textContent = reverted.length;
     document.getElementById("transferredCount").textContent = transferred.length;
     document.getElementById("coeCount").textContent = coe.length;
 
-    /* CARD CLICK FILTERS */
-    document.getElementById("assignedCard").onclick = () => showDetails(assigned);
-    document.getElementById("acceptedCard").onclick = () => showDetails(accepted);
-    document.getElementById("revertedCard").onclick = () => showDetails(reverted);
-    document.getElementById("transferredCard").onclick = () => showDetails(transferred);
-    document.getElementById("coeCard").onclick = () => showDetails(coe);
+    document.getElementById("assignedCard").onclick=()=>showDetails(assigned);
+    document.getElementById("acceptedCard").onclick=()=>showDetails(accepted);
+    document.getElementById("revertedCard").onclick=()=>showDetails(reverted);
+    document.getElementById("transferredCard").onclick=()=>showDetails(transferred);
+    document.getElementById("coeCard").onclick=()=>showDetails(coe);
 
     drawAssignedTrend(assigned);
 }
 
-
-/* ------------------------------------------------------------- */
-/*  SALES TREND CHART                                            */
-/* ------------------------------------------------------------- */
+/* TREND CHART */
 function drawAssignedTrend(rows){
     const monthly = {};
 
@@ -402,23 +462,20 @@ function drawAssignedTrend(rows){
         const m = r.assigned.getMonth()+1;
         const y = r.assigned.getFullYear();
         const key = `${m}/${y}`;
-        monthly[key] = (monthly[key]||0)+1;
+        monthly[key]=(monthly[key]||0)+1;
     });
-
-    const labels = Object.keys(monthly);
-    const data = Object.values(monthly);
 
     new Chart(document.getElementById("assignedChart"), {
         type:"line",
         data:{
-            labels,
+            labels:Object.keys(monthly),
             datasets:[{
-                data,
+                data:Object.values(monthly),
                 borderColor:"#4c8cff",
-                backgroundColor:"rgba(76,140,255,0.2)",
+                backgroundColor:"rgba(76,140,255,0.3)",
                 borderWidth:3,
-                tension:0.35,
-                pointRadius:6,
+                tension:0.4,
+                pointRadius:5,
                 pointBackgroundColor:"#4c8cff"
             }]
         },
@@ -426,15 +483,14 @@ function drawAssignedTrend(rows){
     });
 }
 
-
 /* ------------------------------------------------------------- */
-/*  SALES REP TAB                                                */
+/* SALES — REP */
 /* ------------------------------------------------------------- */
 function updateSalesRep(){
-    const reps = {};
+    const reps={};
 
     MASTER.forEach(r=>{
-        if(!reps[r.salesRep]) reps[r.salesRep] = { assigned:0, accepted:0, reverted:0, transferred:0, coe:0 };
+        if(!reps[r.salesRep]) reps[r.salesRep]={assigned:0,accepted:0,reverted:0,transferred:0,coe:0};
         if(r.assigned!=="") reps[r.salesRep].assigned++;
         if(r.reason.trim()==="") reps[r.salesRep].accepted++;
         if(r.reason.trim()!=="") reps[r.salesRep].reverted++;
@@ -442,14 +498,14 @@ function updateSalesRep(){
         if(r.coe!=="") reps[r.salesRep].coe++;
     });
 
-    const container = document.getElementById("repCards");
-    container.innerHTML = "";
+    const wrap=document.getElementById("repCards");
+    wrap.innerHTML="";
 
     Object.keys(reps).forEach(rep=>{
-        const x = reps[rep];
-        const card = document.createElement("div");
+        const x=reps[rep];
+        const card=document.createElement("div");
         card.className="rep-card";
-        card.innerHTML = `
+        card.innerHTML=`
             <h3>${rep}</h3>
             <p>Assigned: ${x.assigned}</p>
             <p>Accepted: ${x.accepted}</p>
@@ -457,21 +513,19 @@ function updateSalesRep(){
             <p>Transferred: ${x.transferred}</p>
             <p>COE: ${x.coe}</p>
         `;
-        card.onclick = ()=> showDetails(MASTER.filter(r=>r.salesRep===rep));
-        container.appendChild(card);
+        card.onclick=()=>showDetails(MASTER.filter(r=>r.salesRep===rep));
+        wrap.appendChild(card);
     });
 
     drawSalesRepCharts(reps);
 }
 
-
-/* ------------------------------------------------------------- */
-/*  SALES REP CHARTS                                             */
-/* ------------------------------------------------------------- */
 function drawSalesRepCharts(reps){
-    const labels = Object.keys(reps);
-    const assigned = labels.map(r=>reps[r].assigned);
-    const accepted = labels.map(r=>reps[r].accepted);
+    const labels=Object.keys(reps);
+    const assigned=labels.map(r=>reps[r].assigned);
+    const accepted=labels.map(r=>reps[r].accepted);
+    const transferred=labels.map(r=>reps[r].transferred);
+    const coe=labels.map(r=>reps[r].coe);
 
     new Chart(document.getElementById("repBar1"), {
         type:"bar",
@@ -482,37 +536,32 @@ function drawSalesRepCharts(reps){
                 {label:"Accepted", data:accepted, backgroundColor:"#00d26a"}
             ]
         },
-        options:{responsive:true, scales:{y:{beginAtZero:true}}}
+        options:{responsive:true,scales:{y:{beginAtZero:true}}}
     });
-
-    const transferred = labels.map(r=>reps[r].transferred);
-    const coe = labels.map(r=>reps[r].coe);
 
     new Chart(document.getElementById("repBar2"), {
         type:"bar",
         data:{
             labels,
             datasets:[
-                {label:"Transferred", data:transferred, backgroundColor:"#ffae00"},
+                {label:"Transferred", data:transferred, backgroundColor:"#ffaa00"},
                 {label:"COE", data:coe, backgroundColor:"#00d4ff"}
             ]
         },
-        options:{responsive:true, scales:{y:{beginAtZero:true}}}
+        options:{responsive:true,scales:{y:{beginAtZero:true}}}
     });
 }
 
-
 /* ------------------------------------------------------------- */
-/*  GS PERFORMANCE TAB                                           */
+/* GS OVERVIEW */
 /* ------------------------------------------------------------- */
 function updateGS(){
 
-    /* BASIC COUNTS */
-    const transferred = MASTER.filter(r => r.transferred!=="");
-    const offer = MASTER.filter(r => r.offer!=="");
-    const coe = MASTER.filter(r => r.coe!=="");
-    const lodged = MASTER.filter(r => r.lodged!=="");
-    const obtained = MASTER.filter(r => r.obtained!=="");
+    const transferred=MASTER.filter(r=>r.transferred!=="");
+    const offer=MASTER.filter(r=>r.offer!=="");
+    const coe=MASTER.filter(r=>r.coe!=="");
+    const lodged=MASTER.filter(r=>r.lodged!=="");
+    const obtained=MASTER.filter(r=>r.obtained!=="");
 
     document.getElementById("gsTransferredCount").textContent = transferred.length;
     document.getElementById("gsOfferCount").textContent = offer.length;
@@ -523,13 +572,10 @@ function updateGS(){
     drawGSPipelineChart(transferred, offer, coe, lodged, obtained);
     updateGSDurations();
     updateGSLeads();
-    updateGSStuck();
+    updateAlerts();
 }
 
-
-/* ------------------------------------------------------------- */
-/*  GS PIPELINE FUNNEL                                           */
-/* ------------------------------------------------------------- */
+/* PIPELINE */
 function drawGSPipelineChart(a,b,c,d,e){
     new Chart(document.getElementById("gsFunnel"), {
         type:"bar",
@@ -540,43 +586,34 @@ function drawGSPipelineChart(a,b,c,d,e){
                 backgroundColor:"#4c8cff"
             }]
         },
-        options:{responsive:true, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}}}
+        options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
     });
 }
 
-
-/* ------------------------------------------------------------- */
-/*  GS DURATION CALCULATIONS                                     */
-/* ------------------------------------------------------------- */
-function daysBetween(a,b){
-    if(!a || !b || a==="INVALID" || b==="INVALID") return "";
-    return Math.round((b-a)/(1000*60*60*24));
-}
-
+/* DURATION KPIs */
 function updateGSDurations(){
-
-    const stages = [
-        {key:"Transfer → Offer",    get:(r)=>daysBetween(r.transferred,r.offer)},
-        {key:"Offer → COE",         get:(r)=>daysBetween(r.offer,r.coe)},
-        {key:"COE → Lodged",        get:(r)=>daysBetween(r.coe,r.lodged)},
-        {key:"Lodged → Obtained",   get:(r)=>daysBetween(r.lodged,r.obtained)}
+    const stages=[
+        {label:"Transfer → Offer", fn:r=>daysBetween(r.transferred,r.offer)},
+        {label:"Offer → COE", fn:r=>daysBetween(r.offer,r.coe)},
+        {label:"COE → Lodged", fn:r=>daysBetween(r.coe,r.lodged)},
+        {label:"Lodged → Obtained", fn:r=>daysBetween(r.lodged,r.obtained)},
     ];
 
-    const wrap = document.getElementById("gsDurationCards");
-    wrap.innerHTML = "";
+    const wrap=document.getElementById("gsDurationCards");
+    wrap.innerHTML="";
 
-    stages.forEach(stage=>{
-        const arr = MASTER.map(r=>stage.get(r)).filter(x=>x!=="");
+    stages.forEach(s=>{
+        const arr=MASTER.map(x=>s.fn(x)).filter(x=>x!=="");
         if(arr.length===0) return;
 
-        const avg = (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
-        const fast = Math.min(...arr);
-        const slow = Math.max(...arr);
+        const avg=(arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
+        const fast=Math.min(...arr);
+        const slow=Math.max(...arr);
 
-        const div = document.createElement("div");
-        div.className = "gs-card";
-        div.innerHTML = `
-            <div>${stage.key}</div>
+        const div=document.createElement("div");
+        div.className="gs-card";
+        div.innerHTML=`
+            <div>${s.label}</div>
             <p>Avg: ${avg} days</p>
             <p>Fastest: ${fast}</p>
             <p>Slowest: ${slow}</p>
@@ -586,152 +623,142 @@ function updateGSDurations(){
     });
 }
 
-
-/* ------------------------------------------------------------- */
-/*  GS LEAD PERFORMANCE                                          */
-/* ------------------------------------------------------------- */
+/* GS LEADS */
 function updateGSLeads(){
+    const leads={};
 
-    const leads = {};
     MASTER.forEach(r=>{
-        if(!leads[r.gsLead]) leads[r.gsLead] = [];
+        if(!leads[r.gsLead]) leads[r.gsLead]=[];
         leads[r.gsLead].push(r);
     });
 
-    const wrap = document.getElementById("gsLeadCards");
-    wrap.innerHTML = "";
+    const wrap=document.getElementById("gsLeadCards");
+    wrap.innerHTML="";
 
-    Object.keys(leads).forEach(lead=>{
-        const rows = leads[lead];
+    const names=Object.keys(leads);
 
-        const transferred = rows.filter(r=>r.transferred!=="");
-        const offer = rows.filter(r=>r.offer!=="");
-        const coe = rows.filter(r=>r.coe!=="");
-        const lodged = rows.filter(r=>r.lodged!=="");
-        const obtained = rows.filter(r=>r.obtained!=="");
+    names.forEach(ld=>{
+        const list=leads[ld];
+        const div=document.createElement("div");
+        div.className="gs-card";
 
-        const card = document.createElement("div");
-        card.className="gs-card";
-
-        card.innerHTML = `
-            <h3>${lead}</h3>
-            <p>Transferred: ${transferred.length}</p>
-            <p>Offer: ${offer.length}</p>
-            <p>COE: ${coe.length}</p>
-            <p>Lodged: ${lodged.length}</p>
-            <p>Obtained: ${obtained.length}</p>
+        div.innerHTML=`
+            <h3>${ld}</h3>
+            <p>Transferred: ${list.filter(x=>x.transferred!=="").length}</p>
+            <p>Offer: ${list.filter(x=>x.offer!=="").length}</p>
+            <p>COE: ${list.filter(x=>x.coe!=="").length}</p>
+            <p>Lodged: ${list.filter(x=>x.lodged!=="").length}</p>
+            <p>Obtained: ${list.filter(x=>x.obtained!=="").length}</p>
         `;
 
-        card.onclick = ()=> showDetails(rows);
-        wrap.appendChild(card);
+        div.onclick=()=>showDetails(list);
+        wrap.appendChild(div);
     });
 
     drawGSLeadCharts(leads);
 }
 
-
-/* ------------------------------------------------------------- */
-/*  GS LEAD CHARTS                                               */
-/* ------------------------------------------------------------- */
+/* GS LEAD CHARTS */
 function drawGSLeadCharts(leads){
+    const names=Object.keys(leads);
 
-    const names = Object.keys(leads);
+    const bar1=document.getElementById("gsBar1");
+    const bar2=document.getElementById("gsBar2");
 
-    const trans = names.map(n=>leads[n].filter(x=>x.transferred!=="").length);
-    const offer = names.map(n=>leads[n].filter(x=>x.offer!=="").length);
-    const coe = names.map(n=>leads[n].filter(x=>x.coe!=="").length);
-    const lodged = names.map(n=>leads[n].filter(x=>x.lodged!=="").length);
-    const obtained = names.map(n=>leads[n].filter(x=>x.obtained!=="").length);
+    const trans=names.map(n=>leads[n].filter(x=>x.transferred!=="").length);
+    const offer=names.map(n=>leads[n].filter(x=>x.offer!=="").length);
+    const coe=names.map(n=>leads[n].filter(x=>x.coe!=="").length);
+    const lodged=names.map(n=>leads[n].filter(x=>x.lodged!=="").length);
+    const obtained=names.map(n=>leads[n].filter(x=>x.obtained!=="").length);
 
-    new Chart(document.getElementById("gsBar1"), {
+    new Chart(bar1,{
         type:"bar",
         data:{
             labels:names,
             datasets:[
-                {label:"Transferred", data:trans, backgroundColor:"#4c8cff"},
-                {label:"Offer", data:offer, backgroundColor:"#00d26a"},
-                {label:"COE", data:coe, backgroundColor:"#00d4ff"},
-                {label:"Lodged", data:lodged, backgroundColor:"#ffaa00"},
-                {label:"Obtained", data:obtained, backgroundColor:"#ff00aa"}
+                {label:"Transferred",data:trans,backgroundColor:"#4c8cff"},
+                {label:"Offer",data:offer,backgroundColor:"#00d26a"},
+                {label:"COE",data:coe,backgroundColor:"#00d4ff"},
+                {label:"Lodged",data:lodged,backgroundColor:"#ffaa00"},
+                {label:"Obtained",data:obtained,backgroundColor:"#ff00aa"}
             ]
         },
         options:{responsive:true,scales:{y:{beginAtZero:true}}}
     });
 
-    /* AVG DURATION PER GS LEAD */
-    const avgDur = names.map(n=>{
-        const rows = leads[n];
-        let arr = rows.map(r=>daysBetween(r.transferred,r.offer)).filter(x=>x!=="");
-        if(arr.length===0) return 0;
-        return (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
+    /* Avg duration per GS lead */
+    const avgDur=names.map(n=>{
+        const arr=leads[n]
+            .map(r=>daysBetween(r.transferred,r.offer))
+            .filter(x=>x!=="");
+        return arr.length ? (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1) : 0;
     });
 
-    new Chart(document.getElementById("gsBar2"), {
+    new Chart(bar2,{
         type:"bar",
         data:{
             labels:names,
             datasets:[
-                {label:"Avg T→O Days", data:avgDur, backgroundColor:"#4c8cff"}
+                {label:"Avg T→O Days",data:avgDur,backgroundColor:"#4c8cff"}
             ]
         },
-        options:{responsive:true, scales:{y:{beginAtZero:true}}}
+        options:{responsive:true,scales:{y:{beginAtZero:true}}}
     });
 }
 
-
 /* ------------------------------------------------------------- */
-/*  GS STUCK CASES                                               */
+/* GS ALERTS TAB */
 /* ------------------------------------------------------------- */
-function updateGSStuck(){
-    const TB = document.getElementById("stuckBody");
-    TB.innerHTML = "";
+function updateAlerts(){
+    const TB=document.getElementById("alertsStuckBody");
+    TB.innerHTML="";
 
     MASTER.forEach(r=>{
-        let stage = "";
-        let since = "";
+        let stage="", waiting="";
 
         if(r.transferred && !r.offer){
             stage="Waiting for Full Offer";
-            since = daysBetween(r.transferred, new Date());
+            waiting=daysBetween(r.transferred,new Date());
         }
         else if(r.offer && !r.coe){
             stage="Waiting for COE";
-            since = daysBetween(r.offer, new Date());
+            waiting=daysBetween(r.offer,new Date());
         }
         else if(r.coe && !r.lodged){
             stage="Waiting for Visa Lodged";
-            since = daysBetween(r.coe, new Date());
+            waiting=daysBetween(r.coe,new Date());
         }
         else if(r.lodged && !r.obtained){
             stage="Waiting for Visa Obtained";
-            since = daysBetween(r.lodged, new Date());
+            waiting=daysBetween(r.lodged,new Date());
         }
         else return;
 
-        TB.innerHTML += `
-        <tr onclick="showDetails([${JSON.stringify(r)}])" style="cursor:pointer;">
+        const row=document.createElement("tr");
+        row.style.cursor="pointer";
+        row.onclick=()=>showDetails([r]);
+        row.innerHTML=`
             <td>${r.client}</td>
             <td>${r.gsLead}</td>
             <td>${stage}</td>
-            <td>${since} days</td>
-        </tr>`;
+            <td>${waiting} days</td>
+        `;
+        TB.appendChild(row);
     });
 }
 
-
 /* ------------------------------------------------------------- */
-/*  SHOW DETAILS TABLE                                            */
+/* DETAILS */
 /* ------------------------------------------------------------- */
 function showDetails(rows){
     FILTERED = rows;
 
-    document.getElementById("overview-section").style.display="none";
-    document.getElementById("salesrep-section").style.display="none";
+    document.getElementById("sales-section").style.display="none";
     document.getElementById("gs-section").style.display="none";
     document.getElementById("details-section").style.display="block";
     document.getElementById("title").textContent="Details";
 
-    const TB = document.getElementById("detailsBody");
+    const TB=document.getElementById("detailsBody");
     TB.innerHTML = rows.map(r=>`
         <tr>
             <td>${r.client}</td>
@@ -748,43 +775,87 @@ function showDetails(rows){
     `).join("");
 }
 
-
 /* ------------------------------------------------------------- */
-/*  NAVIGATION                                                    */
+/* SIDEBAR NAVIGATION */
 /* ------------------------------------------------------------- */
 document.querySelectorAll(".side-btn").forEach(btn=>{
-    btn.onclick = ()=>{
-        document.querySelectorAll(".side-btn").forEach(b=>b.classList.remove("active"));
+    btn.onclick=()=>{
+        document.querySelectorAll(".side-btn").forEach(x=>x.classList.remove("active"));
         btn.classList.add("active");
 
-        const tab = btn.dataset.tab;
+        const tab=btn.dataset.tab;
 
-        document.getElementById("overview-section").style.display="none";
-        document.getElementById("salesrep-section").style.display="none";
+        document.getElementById("sales-section").style.display="none";
         document.getElementById("gs-section").style.display="none";
         document.getElementById("details-section").style.display="none";
 
-        if(tab==="overview"){
-            document.getElementById("overview-section").style.display="block";
+        if(tab==="sales"){
+            document.getElementById("sales-section").style.display="block";
             document.getElementById("title").textContent="Sales Overview";
-        }
-        if(tab==="salesrep"){
-            document.getElementById("salesrep-section").style.display="block";
-            document.getElementById("title").textContent="Sales Rep Performance";
         }
         if(tab==="gs"){
             document.getElementById("gs-section").style.display="block";
-            document.getElementById("title").textContent="GS Performance";
+            document.getElementById("title").textContent="GS Overview";
         }
         if(tab==="details"){
             document.getElementById("details-section").style.display="block";
-            showDetails(FILTERED.length ? FILTERED : MASTER);
+            showDetails(FILTERED.length?FILTERED:MASTER);
             document.getElementById("title").textContent="Details";
         }
     };
 });
 
+/* ------------------------------------------------------------- */
+/* SALES SUBTABS */
+/* ------------------------------------------------------------- */
+document.querySelectorAll('#sales-section .subtab-btn').forEach(btn=>{
+    btn.onclick=()=>{
+        document.querySelectorAll('#sales-section .subtab-btn').forEach(x=>x.classList.remove("active"));
+        btn.classList.add("active");
 
+        const sub=btn.dataset.sub;
+
+        document.getElementById("sales-overview-tab").style.display="none";
+        document.getElementById("sales-rep-tab").style.display="none";
+
+        if(sub==="sales-overview"){
+            document.getElementById("sales-overview-tab").style.display="block";
+            document.getElementById("title").textContent="Sales Overview";
+        }
+        if(sub==="sales-rep"){
+            document.getElementById("sales-rep-tab").style.display="block";
+            document.getElementById("title").textContent="Sales Rep Performance";
+        }
+    };
+});
+
+/* ------------------------------------------------------------- */
+/* GS SUBTABS */
+/* ------------------------------------------------------------- */
+document.querySelectorAll('#gs-section .subtab-btn').forEach(btn=>{
+    btn.onclick=()=>{
+        document.querySelectorAll('#gs-section .subtab-btn').forEach(x=>x.classList.remove("active"));
+        btn.classList.add("active");
+
+        const sub=btn.dataset.sub;
+
+        document.getElementById("gs-overview-tab").style.display="none";
+        document.getElementById("gs-alerts-tab").style.display="none";
+
+        if(sub==="gs-overview"){
+            document.getElementById("gs-overview-tab").style.display="block";
+            document.getElementById("title").textContent="GS Overview";
+        }
+        if(sub==="gs-alerts"){
+            document.getElementById("gs-alerts-tab").style.display="block";
+            document.getElementById("title").textContent="GS Alerts";
+        }
+    };
+});
+
+/* ------------------------------------------------------------- */
+/* INIT */
+/* ------------------------------------------------------------- */
 loadData();
 
 </script>
