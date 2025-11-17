@@ -1,46 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
+<meta charset="utf-8" />
 <title>Sales Neon Dashboard</title>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
     body {
         margin: 0;
-        background: #071018;
+        background: #060d18;
         font-family: "Poppins", sans-serif;
-        color: #d7e7ff;
+        color: #dce6ff;
     }
 
+    /* SIDEBAR */
     .sidebar {
         width: 220px;
-        background: #0c1624;
+        background: #0b1626;
         height: 100vh;
         position: fixed;
         padding-top: 20px;
-        box-shadow: 3px 0 10px rgba(0,0,0,0.4);
+        box-shadow: 3px 0 12px rgba(0,0,0,0.3);
     }
 
     .side-btn {
-        display: block;
         padding: 15px 20px;
         margin: 10px;
-        background: #0f1d33;
+        background: #101f36;
         border-radius: 8px;
         cursor: pointer;
+        transition: 0.2s;
     }
 
     .side-btn.active {
-        background: #0a5aff;
-        box-shadow: 0 0 15px #0a5aff;
+        background: #0a56ff;
+        color: white;
+        box-shadow: 0 0 15px #0a56ff;
     }
 
     .header {
         margin-left: 240px;
-        padding: 20px;
-        font-size: 28px;
+        padding: 25px;
+        font-size: 32px;
+        color: #8cbaff;
         font-weight: 600;
-        color: #8bbaff;
-        text-shadow: 0 0 12px #0047ff;
+        text-shadow: 0 0 12px #004cff;
     }
 
     .content {
@@ -48,37 +54,59 @@
         padding: 20px;
     }
 
-    .cards {
+    /* CARDS */
+    .cards, .rep-cards {
         display: flex;
         gap: 20px;
-        margin-top: 20px;
         flex-wrap: wrap;
+        margin-top: 15px;
     }
 
-    .card {
+    .card, .rep-card {
         background: #0f1d33;
         padding: 25px;
-        width: 220px;
+        width: 240px;
         border-radius: 12px;
         cursor: pointer;
         text-align: center;
-        box-shadow: 0 0 25px rgba(0, 100, 255, 0.2);
-        transition: 0.2s;
+        box-shadow: 0 0 22px rgba(0, 100, 255, 0.25);
+        transition: 0.25s;
     }
 
-    .card:hover {
-        box-shadow: 0 0 35px rgba(0, 100, 255, 0.45);
+    .card:hover, .rep-card:hover {
+        box-shadow: 0 0 35px rgba(0, 100, 255, 0.55);
         transform: translateY(-4px);
     }
 
-    .card h2 {
+    .card h2, .rep-card h2 {
         margin: 0;
-        font-size: 38px;
+        font-size: 34px;
+        font-weight: 600;
     }
 
+    /* TABS */
+    .tab-row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .tab-btn {
+        padding: 10px 20px;
+        background: #0f1d33;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .tab-btn.active {
+        background: #0a56ff;
+        box-shadow: 0 0 12px #0a56ff;
+    }
+
+    /* TABLE */
     table {
         width: 100%;
-        margin-top: 25px;
+        margin-top: 20px;
         border-collapse: collapse;
         background: #0f1d33;
         border-radius: 10px;
@@ -88,23 +116,24 @@
     th {
         background: #0c1624;
         padding: 12px;
-        color: #8bbaff;
-        font-weight: 600;
         text-align: left;
+        color: #8cbaff;
     }
 
     td {
         padding: 12px;
-        border-top: 1px solid #122238;
-        color: #d8e4ff;
+        border-top: 1px solid #13233c;
+        color: #dce6ff;
     }
 </style>
 </head>
 
 <body>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
-    <div class="side-btn active" data-tab="sales">Sales</div>
+    <div class="side-btn active" data-tab="overview">Sales Overview</div>
+    <div class="side-btn" data-tab="salesrep">Sales Rep</div>
     <div class="side-btn" data-tab="details">Details</div>
 </div>
 
@@ -112,55 +141,89 @@
 
 <div class="content">
 
-    <!-- SALES SECTION -->
-    <div id="sales-section">
+<!-- ========================================= -->
+<!-- OVERVIEW TAB -->
+<!-- ========================================= -->
+<div id="overview-section">
 
-        <div class="cards">
-            <div class="card" id="assignedCard">
-                <div>Assigned</div>
-                <h2 id="assignedCount">0</h2>
-            </div>
-
-            <div class="card" id="acceptedCard">
-                <div>Accepted</div>
-                <h2 id="acceptedCount">0</h2>
-            </div>
-
-            <div class="card" id="revertedCard">
-                <div>Reverted</div>
-                <h2 id="revertedCount">0</h2>
-            </div>
+    <div class="cards">
+        <div class="card" id="assignedCard">
+            <div>Assigned</div>
+            <h2 id="assignedCount">0</h2>
         </div>
 
+        <div class="card" id="acceptedCard">
+            <div>Accepted</div>
+            <h2 id="acceptedCount">0</h2>
+        </div>
+
+        <div class="card" id="revertedCard">
+            <div>Reverted</div>
+            <h2 id="revertedCount">0</h2>
+        </div>
+
+        <div class="card" id="transferredCard">
+            <div>Transferred</div>
+            <h2 id="transferredCount">0</h2>
+        </div>
+
+        <div class="card" id="coeCard">
+            <div>COE</div>
+            <h2 id="coeCount">0</h2>
+        </div>
     </div>
 
-    <!-- DETAILS SECTION -->
-    <div id="details-section" style="display:none;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Sales Rep</th>
-                    <th>Assigned</th>
-                    <th>Transferred</th>
-                    <th>COE</th>
-                    <th>GS Lead</th>
-                    <th>Reason</th>
-                </tr>
-            </thead>
-            <tbody id="detailsBody"></tbody>
-        </table>
-    </div>
+    <h3 style="margin-top:30px;color:#8cbaff;text-shadow:0 0 8px #004cff;">Assigned Trend</h3>
+    <canvas id="assignedChart" height="120"></canvas>
+
+</div>
+
+
+
+<!-- ========================================= -->
+<!-- SALES REP TAB -->
+<!-- ========================================= -->
+<div id="salesrep-section" style="display:none;">
+    <div class="rep-cards" id="repCards"></div>
+
+    <h3 style="margin-top:30px;color:#8cbaff;">Rep Comparison</h3>
+
+    <canvas id="repBar1" height="140"></canvas>
+    <br><br>
+    <canvas id="repBar2" height="140"></canvas>
+</div>
+
+
+<!-- ========================================= -->
+<!-- DETAILS TAB -->
+<!-- ========================================= -->
+<div id="details-section" style="display:none;">
+    <table>
+        <thead>
+            <tr>
+                <th>Rep</th>
+                <th>Assigned</th>
+                <th>Transferred</th>
+                <th>COE</th>
+                <th>GS Lead</th>
+                <th>Reason</th>
+            </tr>
+        </thead>
+        <tbody id="detailsBody"></tbody>
+    </table>
+</div>
+
 
 </div>
 
 <script>
+
 const API = "https://salesdashboard.ashishoct34.workers.dev/";
+let MASTER = [];
+let FILTERED = [];
 
-let MASTER = [];  // all rows (unsorted, raw)
-let FILTERED = []; // rows for details page
-
-function toDate(v) {
-    if (!v || v.trim() === "") return "";
+function toDate(v){
+    if(!v || v.trim()==="") return "";
     const d = new Date(v);
     return isNaN(d) ? "" : d;
 }
@@ -170,12 +233,11 @@ async function loadData() {
     const json = await res.json();
 
     MASTER = [];
-
-    Object.values(json.data).forEach(arr => {
-        arr.forEach(r => {
+    Object.values(json.data).forEach(arr=>{
+        arr.forEach(r=>{
             MASTER.push({
                 rep: r["sales rep"] || "",
-                assigned: toDate(r["assigned date"]),
+                assigned: r["assigned date"]?.trim() !== "" ? (toDate(r["assigned date"]) || "INVALID") : "",
                 transferred: toDate(r["transferred to gs date"]),
                 coe: toDate(r["coe obtained date"]),
                 gsLead: r["gs lead"] || "",
@@ -184,37 +246,158 @@ async function loadData() {
         });
     });
 
-    updateCards();
+    updateOverview();
+    updateSalesRep();
 }
 
-function updateCards() {
+
+function updateOverview(){
     const assigned = MASTER.filter(r => r.assigned !== "");
     const reverted = assigned.filter(r => r.reason.trim() !== "");
     const accepted = assigned.filter(r => r.reason.trim() === "");
+    const transferred = assigned.filter(r => r.transferred !== "");
+    const coe = assigned.filter(r => r.coe !== "");
 
     document.getElementById("assignedCount").textContent = assigned.length;
     document.getElementById("acceptedCount").textContent = accepted.length;
     document.getElementById("revertedCount").textContent = reverted.length;
+    document.getElementById("transferredCount").textContent = transferred.length;
+    document.getElementById("coeCount").textContent = coe.length;
 
-    // card click → show filtered list
     document.getElementById("assignedCard").onclick = () => showDetails(assigned);
     document.getElementById("acceptedCard").onclick = () => showDetails(accepted);
     document.getElementById("revertedCard").onclick = () => showDetails(reverted);
+    document.getElementById("transferredCard").onclick = () => showDetails(transferred);
+    document.getElementById("coeCard").onclick = () => showDetails(coe);
+
+    drawAssignedChart(assigned);
 }
 
-function showDetails(rows) {
+
+function drawAssignedChart(rows){
+    const monthCounts = {};
+
+    rows.forEach(r=>{
+        if(r.assigned === "" || r.assigned === "INVALID") return;
+        const m = (r.assigned.getMonth()+1);
+        const y = r.assigned.getFullYear();
+        const key = `${m}/${y}`;
+        monthCounts[key] = (monthCounts[key]||0)+1;
+    });
+
+    const labels = Object.keys(monthCounts);
+    const data = Object.values(monthCounts);
+
+    new Chart(document.getElementById("assignedChart"), {
+        type:"line",
+        data:{
+            labels,
+            datasets:[{
+                label:"Assigned",
+                data,
+                borderColor:"#4c8cff",
+                backgroundColor:"rgba(76,140,255,0.25)",
+                tension:0.4,
+                borderWidth:3,
+                pointRadius:5,
+                pointBackgroundColor:"#4c8cff"
+            }]
+        },
+        options:{
+            responsive:true,
+            plugins:{legend:{display:false}}
+        }
+    });
+
+}
+
+
+function updateSalesRep(){
+    const reps = {};
+    MASTER.forEach(r=>{
+        if(!reps[r.rep]) reps[r.rep] = {assigned:0, accepted:0, reverted:0, transferred:0, coe:0};
+        if(r.assigned!=="") reps[r.rep].assigned++;
+        if(r.reason.trim()==="") reps[r.rep].accepted++;
+        if(r.reason.trim()!=="") reps[r.rep].reverted++;
+        if(r.transferred!=="") reps[r.rep].transferred++;
+        if(r.coe!=="") reps[r.rep].coe++;
+    });
+
+    const container = document.getElementById("repCards");
+    container.innerHTML = "";
+
+    Object.keys(reps).forEach(rep=>{
+        const info = reps[rep];
+        const card = document.createElement("div");
+        card.className = "rep-card";
+        card.innerHTML = `
+            <h3>${rep}</h3>
+            <p>Assigned: ${info.assigned}</p>
+            <p>Accepted: ${info.accepted}</p>
+            <p>Transferred: ${info.transferred}</p>
+            <p>COE: ${info.coe}</p>
+        `;
+        card.onclick = ()=> showDetails(MASTER.filter(r=>r.rep===rep));
+        container.appendChild(card);
+    });
+
+    drawRepCharts(reps);
+}
+
+
+function drawRepCharts(reps){
+    const labels = Object.keys(reps);
+    const assigned = labels.map(r=>reps[r].assigned);
+    const accepted = labels.map(r=>reps[r].accepted);
+    const transferred = labels.map(r=>reps[r].transferred);
+    const coe = labels.map(r=>reps[r].coe);
+
+    new Chart(document.getElementById("repBar1"), {
+        type:"bar",
+        data:{
+            labels,
+            datasets:[
+                {label:"Assigned",data:assigned,backgroundColor:"#4c8cff"},
+                {label:"Accepted",data:accepted,backgroundColor:"#00d26a"}
+            ]
+        },
+        options:{
+            responsive:true,
+            scales:{y:{beginAtZero:true}}
+        }
+    });
+
+    new Chart(document.getElementById("repBar2"), {
+        type:"bar",
+        data:{
+            labels,
+            datasets:[
+                {label:"Transferred",data:transferred,backgroundColor:"#ffae00"},
+                {label:"COE",data:coe,backgroundColor:"#00d4ff"}
+            ]
+        },
+        options:{
+            responsive:true,
+            scales:{y:{beginAtZero:true}}
+        }
+    });
+
+}
+
+
+function showDetails(rows){
     FILTERED = rows;
 
-    // switch screen
-    document.getElementById("sales-section").style.display = "none";
-    document.getElementById("details-section").style.display = "block";
-    document.getElementById("title").textContent = "Details";
+    document.getElementById("overview-section").style.display="none";
+    document.getElementById("salesrep-section").style.display="none";
+    document.getElementById("details-section").style.display="block";
+    document.getElementById("title").textContent="Details";
 
     const TB = document.getElementById("detailsBody");
-    TB.innerHTML = rows.map(r => `
+    TB.innerHTML = rows.map(r=>`
         <tr>
             <td>${r.rep}</td>
-            <td>${r.assigned ? r.assigned.toLocaleDateString("en-GB") : ""}</td>
+            <td>${r.assigned && r.assigned!=="INVALID" ? r.assigned.toLocaleDateString("en-GB") : ""}</td>
             <td>${r.transferred ? r.transferred.toLocaleDateString("en-GB") : ""}</td>
             <td>${r.coe ? r.coe.toLocaleDateString("en-GB") : ""}</td>
             <td>${r.gsLead}</td>
@@ -223,28 +406,37 @@ function showDetails(rows) {
     `).join("");
 }
 
-// NAVIGATION
-document.querySelectorAll(".side-btn").forEach(btn => {
-    btn.onclick = () => {
-        document.querySelectorAll(".side-btn").forEach(b => b.classList.remove("active"));
+
+document.querySelectorAll(".side-btn").forEach(btn=>{
+    btn.onclick = ()=>{
+        document.querySelectorAll(".side-btn").forEach(b=>b.classList.remove("active"));
         btn.classList.add("active");
 
-        if (btn.dataset.tab === "sales") {
-            document.getElementById("sales-section").style.display = "block";
-            document.getElementById("details-section").style.display = "none";
-            document.getElementById("title").textContent = "Sales Overview";
-        }
+        const tab = btn.dataset.tab;
 
-        if (btn.dataset.tab === "details") {
-            document.getElementById("sales-section").style.display = "none";
-            document.getElementById("details-section").style.display = "block";
-            document.getElementById("title").textContent = "Details";
+        document.getElementById("overview-section").style.display="none";
+        document.getElementById("salesrep-section").style.display="none";
+        document.getElementById("details-section").style.display="none";
+
+        if(tab==="overview"){
+            document.getElementById("overview-section").style.display="block";
+            document.getElementById("title").textContent="Sales Overview";
+        }
+        if(tab==="salesrep"){
+            document.getElementById("salesrep-section").style.display="block";
+            document.getElementById("title").textContent="Sales Rep Overview";
+        }
+        if(tab==="details"){
+            document.getElementById("details-section").style.display="block";
+            document.getElementById("title").textContent="Details";
             showDetails(FILTERED.length ? FILTERED : MASTER);
         }
     };
 });
 
+
 loadData();
+
 </script>
 
 </body>
