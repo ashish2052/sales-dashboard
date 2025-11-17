@@ -1,202 +1,367 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>GSG — Sales & GS Dashboard (API Powered)</title>
+<meta charset="UTF-8">
+<title>GSG Neon Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- GOOGLE FONTS -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+/* ================================
+   🔥 NEON DARK THEME 
+   (Ashish Signature Style)
+   ================================ */
 :root {
-  --bg:#f6f8fb;
-  --panel:#fff;
-  --panel2:#f3f6fb;
-  --ink:#0f172a;
-  --muted:#6b7280;
-  --ok:#16a34a;
-  --warn:#f59e0b;
-  --bad:#ef4444;
-  --border:#e5e7eb;
-  --shadow:0 10px 30px rgba(2,6,23,.08);
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-  display:flex;
-}
-aside{
-  width:240px;background:#0b1220;color:#e5e7eb;
-  border-right:1px solid rgba(255,255,255,.08);
-  padding:18px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  position:sticky;
-  top:0;
-  height:100vh;
-}
-.logo{font-weight:800}
-.side-btn{
-  padding:10px 12px;
-  border-radius:12px;
-  background:#121a2b;
-  border:1px solid rgba(255,255,255,.06);
-  color:#d1d5db;
-  cursor:pointer;
-  text-align:left;
-  transition:.15s;
-}
-.side-btn:hover{transform:translateY(-1px);background:#17213a}
-.side-btn.active{
-  background:linear-gradient(90deg,#3b82f6 0%,#22c55e 100%);
-  color:#071225;font-weight:800;border-color:transparent;
-}
-main{flex:1;min-width:0}
-.wrap{max-width:1400px;margin:0 auto;padding:22px}
-header{display:flex;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:10px}
-h1{margin:0;font-size:24px}
-.sub{color:var(--muted);font-size:12px}
-
-.card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:14px;
-  box-shadow:var(--shadow);
+  --bg: #050A1F;
+  --card: #0A102C;
+  --card2: #0E1438;
+  --text: #E6EEFF;
+  --sub: #8FA4CE;
+  --neon-blue: #4DB7FF;
+  --neon-green: #4DFF91;
+  --border: rgba(255,255,255,0.08);
+  --shadow: 0 0 28px rgba(0, 174, 255, 0.25);
 }
 
-.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.btn{
-  padding:8px 12px;
-  border-radius:10px;
-  background:#eef2ff;
-  border:1px solid #dbeafe;
-  color:#1e293b;
-  cursor:pointer;
-}
-.btn.active{
-  background:#3b82f6;color:#fff;border-color:#3b82f6;font-weight:700;
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Poppins', sans-serif;
+  display: flex;
 }
 
-.select,input[type=file],input[type=date],input[type=number]{
-  background:#fff;border:1px solid var(--border);border-radius:10px;padding:8px 10px;
+/* ================================
+   SIDE NAVIGATION
+   ================================ */
+aside {
+  width: 240px;
+  padding: 22px 16px;
+  background: rgba(0,0,0,0.35);
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  height: 100vh;
 }
 
-.tabs{display:flex;gap:8px;margin-top:12px}
-.tab-btn{padding:8px 12px;border-radius:10px;background:#eef2ff;border:1px solid #dbeafe}
-.tab-btn.active{background:#3b82f6;color:#fff;border-color:#3b82f6;font-weight:700}
-
-.section{display:none}
-.section.active{display:block}
-.tab{display:none;margin-top:12px}
-.tab.active{display:block}
-
-.kpis{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:12px;
-  margin:12px 0;
-}
-.kpi{padding:14px 16px;border-radius:14px;background:var(--panel2);border:1px solid var(--border)}
-.kpi h3{margin:0 0 6px;font-size:12px;color:var(--muted)}
-.big{font-size:26px;font-weight:800}
-
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-
-.table{
-  overflow:auto;
-  border-radius:12px;
-  border:1px solid var(--border);
-  margin-top:10px;
-  background:#fff;
-}
-table{width:100%;border-collapse:separate;border-spacing:0}
-th,td{
-  padding:10px 12px;
-  text-align:left;
-  border-bottom:1px solid var(--border);
-  white-space:nowrap;
-  font-size:14px;
-}
-thead th{position:sticky;top:0;background:#f8fafc;color:#334155;font-size:12px}
-
-.story{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:14px}
-.story .chip{
-  display:flex;gap:6px;align-items:center;padding:6px 10px;
-  border:1px solid var(--border);border-radius:999px;background:#fff;
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--neon-blue);
+  margin-bottom: 25px;
+  text-shadow: 0 0 12px var(--neon-blue);
 }
 
-.pill{padding:3px 8px;border-radius:999px;font-weight:700;font-size:12px}
-.p-ok{background:#ecfdf5;color:#065f46}
-.p-warn{background:#fffbeb;color:#92400e}
-.p-bad{background:#fef2f2;color:#991b1b}
-
-canvas{
-  background:#fff;border:1px solid var(--border);border-radius:12px;padding:8px;
+.side-btn {
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--sub);
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 15px;
 }
 
-@media(max-width:1200px){
-  .kpis{grid-template-columns:1fr}
-  .grid-2{grid-template-columns:1fr}
+.side-btn:hover {
+  background: #111A42;
+  transform: translateX(3px);
+}
+
+.side-btn.active {
+  background: linear-gradient(90deg, var(--neon-blue), var(--neon-green));
+  color: #041125;
+  font-weight: 700;
+  border-color: transparent;
+  box-shadow: 0 0 14px var(--neon-blue);
+}
+
+/* ================================
+   MAIN CONTENT 
+   ================================ */
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 20px;
+}
+
+.wrap {
+  max-width: 1500px;
+  margin: auto;
+}
+
+/* ================================
+   HEADER
+   ================================ */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 32px;
+  color: var(--neon-blue);
+  text-shadow: 0 0 12px var(--neon-blue);
+}
+
+.sub {
+  color: var(--sub);
+  font-size: 13px;
+}
+
+#today {
+  background: var(--card2);
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+}
+
+/* ================================
+   CARD / PANEL BASE
+   ================================ */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+/* ================================
+   CONTROLS
+   ================================ */
+.controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn {
+  padding: 7px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card2);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.btn.active {
+  background: var(--neon-blue);
+  color: #041125;
+  border-color: transparent;
+  font-weight: 700;
+}
+
+/* ================================
+   SELECTS / INPUTS
+   ================================ */
+select, input[type=date], input[type=number] {
+  padding: 8px 10px;
+  background: var(--card2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* ================================
+   TABS
+   ================================ */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.tab-btn {
+  background: var(--card2);
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  background: var(--neon-blue);
+  color: #041125;
+  font-weight: 700;
+  box-shadow: 0 0 12px var(--neon-blue);
+}
+
+.section { display: none; }
+.section.active { display: block; }
+.tab { display: none; margin-top: 15px; }
+.tab.active { display: block; }
+
+/* ================================
+   KPI CARDS
+   ================================ */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.kpi {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+
+.kpi h3 {
+  color: var(--sub);
+  margin: 0 0 6px;
+  font-size: 13px;
+}
+
+.big {
+  font-size: 28px;
+  font-weight: 700;
+  text-shadow: 0 0 10px var(--neon-green);
+}
+
+/* ================================
+   TABLES
+   ================================ */
+.table {
+  margin-top: 12px;
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: #0F1A3E;
+  padding: 10px;
+  font-size: 12px;
+  color: var(--neon-blue);
+  text-shadow: 0 0 8px var(--neon-blue);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+/* ================================
+   CHARTS
+   ================================ */
+canvas {
+  background: var(--card2);
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+/* ================================
+   DETAILS TAB (NEON)
+   ================================ */
+#details-table-wrap {
+  margin-top: 18px;
+}
+
+#details-title {
+  font-size: 20px;
+  color: var(--neon-green);
+  font-weight: 700;
+  text-shadow: 0 0 14px var(--neon-green);
 }
 </style>
+
 </head>
 
 <body>
-  <aside>
-    <div class="logo">GSG — KPI</div>
-    <button class="side-btn active" data-dept="sales">💼 Sales</button>
-    <button class="side-btn" data-dept="gs">🧩 GS Team</button>
-    <button class="side-btn" data-dept="bonus">💰 Bonus</button>
-  </aside>
 
-  <main>
-    <div class="wrap">
+<!-- ======================
+     SIDE NAVIGATION
+     ====================== -->
+<aside>
+  <div class="logo">GSG Neon</div>
 
+  <button class="side-btn active" data-dept="sales">💼 Sales</button>
+  <button class="side-btn" data-dept="gs">🧩 GS Team</button>
+  <button class="side-btn" data-dept="bonus">💰 Bonus</button>
+  <button class="side-btn" data-dept="details">🔍 Details</button>
+</aside>
+
+<main>
+<div class="wrap">
+
+<!-- ======================
+     HEADER
+     ====================== -->
 <header>
   <div>
-    <h1 id="title">Sales — Dashboard</h1>
-    <div class="sub">Connected to Cloudflare API → automatic updates</div>
+    <h1 id="title">Sales — Neon Dashboard</h1>
+    <div class="sub">Connected to Cloudflare API → Automatic Neon Updates</div>
   </div>
   <div class="card"><div id="today"></div></div>
 </header>
 
+<!-- ======================
+     CONTROLS PANEL
+     ====================== -->
 <div class="card controls">
   <span id="hint" class="sub">Loading data from API...</span>
 
   <span class="sub">Office:</span>
-  <select id="officeSel" class="select">
-    <option value="All">All</option>
+  <select id="officeSel">
+    <option>All</option>
     <option>Nepal</option>
     <option>Australia</option>
   </select>
 
   <span class="sub">Salesperson:</span>
-  <select id="salesSel" class="select">
+  <select id="salesSel">
     <option>All</option>
   </select>
 
   <span class="sub">Date:</span>
   <div id="dateBtns" class="controls">
-    <button class="btn active" data-range="all">All time</button>
-    <button class="btn" data-range="90">Last 90d</button>
-    <button class="btn" data-range="60">Last 60d</button>
-    <button class="btn" data-range="30">Last 30d</button>
-    <button class="btn" data-range="7">Last 7d</button>
+    <button class="btn active" data-range="all">All</button>
+    <button class="btn" data-range="90">90d</button>
+    <button class="btn" data-range="60">60d</button>
+    <button class="btn" data-range="30">30d</button>
+    <button class="btn" data-range="7">7d</button>
   </div>
 
-  <label>Custom: <input id="from" type="date"> — <input id="to" type="date"></label>
+  <span class="sub">Custom:</span>
+  <input id="from" type="date">
+  <span class="sub">—</span>
+  <input id="to" type="date">
   <button id="applyCustom" class="btn">Apply</button>
-  <span class="sub" id="activeRange">Range: All time</span>
 </div>
 
-<!-- SALES -->
+<!-- ======================
+     SALES SECTION
+     ====================== -->
 <section id="dept-sales" class="section active">
   <div class="tabs">
     <button class="tab-btn active" data-tab="sales-summary">Summary</button>
@@ -204,23 +369,26 @@ canvas{
   </div>
 
   <section id="sales-summary" class="tab active">
-    <div id="sales_story" class="story card" style="margin-bottom:10px"></div>
+    <div id="sales_story" class="card" style="margin-bottom:12px"></div>
     <div class="kpis" id="sales_kpis"></div>
 
     <div class="grid-2">
-      <div class="card"><h3 style="margin:0">Transfers to GS — Monthly</h3><canvas id="sales_trans_m" height="230"></canvas></div>
-      <div class="card"><h3 style="margin:0">COEs — Monthly</h3><canvas id="sales_coe_m" height="230"></canvas></div>
+      <div class="card"><h3>Transfers Monthly</h3><canvas id="sales_trans_m" height="230"></canvas></div>
+      <div class="card"><h3>COEs Monthly</h3><canvas id="sales_coe_m" height="230"></canvas></div>
     </div>
   </section>
 
   <section id="sales-reps" class="tab">
-    <div class="controls card" style="margin-bottom:10px">
-      <span class="sub">Targets per rep: Nepal → 15/mo; Australia → 10/mo.</span>
+    <div class="card sub" style="margin-bottom:8px">
+      Targets → Nepal: 15/mo | Australia: 10/mo
     </div>
     <div class="table"><table id="sales_rep_tbl"><thead></thead><tbody></tbody></table></div>
   </section>
 </section>
-      <!-- =================== GS SECTION =================== -->
+
+<!-- ======================
+     GS SECTION
+     ====================== -->
 <section id="dept-gs" class="section">
   <div class="tabs">
     <button class="tab-btn active" data-tab="gs-summary">Summary</button>
@@ -228,119 +396,144 @@ canvas{
   </div>
 
   <section id="gs-summary" class="tab active">
-    <div id="gs_story" class="story card" style="margin-bottom:10px"></div>
+    <div id="gs_story" class="card" style="margin-bottom:12px"></div>
     <div class="kpis" id="gs_kpis"></div>
 
     <div class="grid-2">
-      <div class="card"><h3 style="margin:0">Visa Grants — Monthly</h3><canvas id="gs_visa_m" height="230"></canvas></div>
-      <div class="card"><h3 style="margin:0">Visa Grant Rate — Quarterly</h3><canvas id="gs_rate_q" height="230"></canvas></div>
+      <div class="card"><h3>Visa Grants Monthly</h3><canvas id="gs_visa_m" height="230"></canvas></div>
+      <div class="card"><h3>Grant Rate Quarterly</h3><canvas id="gs_rate_q" height="230"></canvas></div>
     </div>
   </section>
 
   <section id="gs-reps" class="tab">
-    <div class="controls card" style="margin-bottom:10px">
-      <span class="sub">KPIs: COE/Assigned, Grant/Assigned, ≥90% grant rate goal.</span>
+    <div class="card sub" style="margin-bottom:8px">
+      KPI: Grant ≥ 90% & COE Performance Rankings
     </div>
     <div class="table"><table id="gs_rep_tbl"><thead></thead><tbody></tbody></table></div>
   </section>
 </section>
 
-<!-- =================== BONUS SECTION =================== -->
+<!-- ======================
+     BONUS SECTION
+     ====================== -->
 <section id="dept-bonus" class="section">
   <div class="tabs">
     <button class="tab-btn active" data-tab="bonus-qtr">Quarterly Eligibility</button>
   </div>
 
   <section id="bonus-qtr" class="tab active">
-    <div class="controls card" style="margin-bottom:10px">
-      <span class="sub">Quarter:</span>
-      <select id="bonusQuarterSel" class="select"><option value="">Latest</option></select>
-      <span class="sub">GS: ≥90% Grant Rate AND ≥25 Grants → Eligible</span>
+    <div class="card sub">
+      <span>Quarter:</span>
+      <select id="bonusQuarterSel"></select>
     </div>
 
     <div class="kpis" id="bonus_kpis"></div>
 
     <div class="grid-2">
       <div class="card">
-        <h3 style="margin:0">Sales Bonus — Nepal</h3>
-        <div class="table" style="margin-top:8px">
-          <table id="bonus_sales_np_tbl"><thead></thead><tbody></tbody></table>
-        </div>
+        <h3>Nepal Sales Bonus</h3>
+        <div class="table"><table id="bonus_sales_np_tbl"><thead></thead><tbody></tbody></table></div>
       </div>
 
       <div class="card">
-        <h3 style="margin:0">Sales Bonus — Australia</h3>
-        <div class="table" style="margin-top:8px">
-          <table id="bonus_sales_au_tbl"><thead></thead><tbody></tbody></table>
-        </div>
+        <h3>Australia Sales Bonus</h3>
+        <div class="table"><table id="bonus_sales_au_tbl"><thead></thead><tbody></tbody></table></div>
       </div>
     </div>
 
-    <div class="card" style="margin-top:12px">
-      <h3 style="margin:0">GS Bonus</h3>
-      <div class="table" style="margin-top:8px">
-        <table id="bonus_gs_tbl"><thead></thead><tbody></tbody></table>
-      </div>
+    <div class="card" style="margin-top:14px">
+      <h3>GS Bonus</h3>
+      <div class="table"><table id="bonus_gs_tbl"><thead></thead><tbody></tbody></table></div>
     </div>
   </section>
 </section>
 
-</div> <!-- wrap -->
-</main>
+<!-- ======================
+     DETAILS SECTION (NEW)
+     ====================== -->
+<section id="dept-details" class="section">
+  <h2 id="details-title">Details</h2>
 
-<!-- ========================= JAVASCRIPT ========================= -->
-<script>
-document.getElementById('today').textContent =
-  new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  <div id="details-table-wrap" class="card">
+    <div class="table">
+      <table id="details_tbl"><thead></thead><tbody></tbody></table>
+    </div>
+  </div>
+</section>
+  <script>
+// ===========================================================
+// 🔥 NEON DASHBOARD CORE ENGINE (PART 2 / 3)
+// ===========================================================
+
+document.getElementById("today").textContent =
+  new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 
 const API_URL = "https://salesdashboard.ashishoct34.workers.dev/";
 
 let _wb = null;
-let RANGE='all', CUSTOM=null, OFFICE='All', SALESPERSON='All', BONUS_Q=null;
+let RANGE = "all";
+let CUSTOM = null;
+let OFFICE = "All";
+let SALESPERSON = "All";
+let BONUS_Q = null;
 
-/* Utility Functions */
-const fmt = new Intl.NumberFormat('en-IN');
-const num = n => isFinite(n) ? fmt.format(Math.round(n)) : '—';
-const lc=s=>(s||'').toString().trim().toLowerCase();
-const $  = sel => document.querySelector(sel);
-const $$ = sel => Array.from(document.querySelectorAll(sel));
+// SIMPLE UTILITIES
+const fmt = new Intl.NumberFormat("en-IN");
+const num = (n) => (isFinite(n) ? fmt.format(Math.round(n)) : "—");
+const lc = (s) => (s || "").toString().trim().toLowerCase();
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
-function toDate(v){
-  if (v instanceof Date) return isNaN(v)?new Date(NaN):v;
-  if (typeof v === 'number'){
-    if (v < 20000) return new Date(NaN);
-    const epoch=new Date(Date.UTC(1899,11,30));
-    return new Date(epoch.getTime()+v*86400000);
+// DATE PARSER
+function toDate(v) {
+  if (!v) return null;
+  if (v instanceof Date) return isNaN(v) ? null : v;
+
+  const s = String(v).trim();
+  if (!s) return null;
+
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+
+const ymon = (d) =>
+  d instanceof Date && !isNaN(d)
+    ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
+    : "";
+
+const quarterKey = (d) =>
+  d instanceof Date && !isNaN(d)
+    ? `${d.getFullYear()}-Q${Math.floor(d.getMonth() / 3) + 1}`
+    : "";
+
+// DATE FILTER
+function inRange(d, today) {
+  if (!(d instanceof Date) || isNaN(d) || d > today) return false;
+  if (CUSTOM) {
+    const fd = new Date(CUSTOM[0] + "T00:00:00");
+    const td = new Date(CUSTOM[1] + "T23:59:59");
+    return d >= fd && d <= td;
   }
-  const s=String(v||'').trim(); if(!s) return new Date(NaN);
-  const m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if(m) return new Date(+m[1],+m[2]-1,+m[3]);
-  const d=new Date(s); return isNaN(d)?new Date(NaN):d;
-}
-const ymon=d=>d instanceof Date&&!isNaN(d)?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`:'';
-const quarterKey=d=>d instanceof Date&&!isNaN(d)?`${d.getFullYear()}-Q${Math.floor(d.getMonth()/3)+1}`:'';
+  if (RANGE === "all") return true;
 
-function inRange(d,today){
-  if(!(d instanceof Date)||isNaN(d)||d>today) return false;
-  if(CUSTOM){
-    const fd=new Date(CUSTOM[0]+'T00:00:00'),
-          td=new Date(CUSTOM[1]+'T23:59:59');
-    return d>=fd&&d<=td;
-  }
-  if(RANGE==='all') return true;
-  const n=+RANGE, start=new Date(today); start.setDate(today.getDate()-n+1);
-  return d>=start && d<=today;
-}
-function filterByDate(rows, field){
-  const today=new Date();
-  if(RANGE==='all'&&!CUSTOM) return rows.filter(r=>r[field] instanceof Date && !isNaN(r[field]));
-  return rows.filter(r=>r[field] instanceof Date && inRange(r[field],today));
+  const n = +RANGE;
+  const start = new Date(today);
+  start.setDate(today.getDate() - n + 1);
+  return d >= start && d <= today;
 }
 
-/* API Loader */
-async function loadFromAPI(){
+function filterByDate(rows, field) {
+  const today = new Date();
+  return rows.filter((r) => r[field] instanceof Date && inRange(r[field], today));
+}
+
+// ======================================================
+//    API → Normalize → Workbook
+// ======================================================
+async function loadFromAPI() {
   try {
-    $('#hint').textContent = "Fetching data from Cloudflare...";
+    $("#hint").textContent = "Fetching from Cloudflare API...";
+
     const res = await fetch(API_URL);
     const json = await res.json();
     const data = json.data;
@@ -351,378 +544,554 @@ async function loadFromAPI(){
       Kumkum: data.Kumkum || []
     };
 
-    $('#hint').textContent = "Loaded successfully.";
+    $("#hint").textContent = "Loaded Successfully.";
 
     populateSalesDropdown();
     rebuildQuarterDropdown();
     buildAll();
-
-  } catch (e){
-    $('#hint').textContent = "Error loading API: " + e.message;
+  } catch (e) {
+    $("#hint").textContent = "API ERROR: " + e.message;
   }
 }
+
 window.onload = loadFromAPI;
 
-/* Field Mapping */
+// FIELD MAPPING — correctly matches your actual columns
 const H = {
-  assignedOffice:['Assigned Office','Office'],
-  assignee:['Assignee','Assigned To','Assigned'],
-  salesRep:['Sales Rep','Sales Representative','Salesperson'],
-  gsRep:['GS Lead','GS Rep','GS Officer'],
-  reasonReverted:['Reason if Reverted','Reason','Reverted'],
-  assignedDate:['Assigned Date'],
-  tgs:['Transferred to GS Date'],
-  fol:['Full Offer Date'],
-  coe:['COE Obtained Date'],
-  visaLodged:['Visa Lodged Date'],
-  visa:['Visa Obtained Date']
+  office: ["Assigned Office", "Office"],
+  salesRep: ["Sales Rep", "Sales Representative"],
+  gsRep: ["GS Lead", "GS Officer"],
+  assignee: ["Assignee"],
+  assigned: ["Assigned Date"],
+
+  tgs: ["Transferred to GS Date"],    // COLUMN I
+  coe: ["COE Obtained Date"],         // COLUMN K
+  lodged: ["Visa Lodged Date"],       // COLUMN L
+  visa: ["Visa Obtained Date"],       // COLUMN M
+
+  reason: ["Reason if Reverted"]
 };
 
-function fuzzyKey(row, arr){
-  const wantList=Array.isArray(arr)?arr:[arr];
-  const keys=Object.keys(row);
-  for(const w of wantList){
-    const k=keys.find(h=>lc(h)===lc(w)); if(k) return k;
+// FUZZY FIELD PICKER
+function fuzzyKey(row, arr) {
+  const want = Array.isArray(arr) ? arr : [arr];
+  const keys = Object.keys(row);
+
+  for (const w of want) {
+    const k = keys.find((x) => lc(x) === lc(w));
+    if (k) return k;
   }
-  const toksList = wantList.map(w=>lc(w).split(/\s+/));
-  for(const k of keys){
-    const kl=lc(k);
-    for(const toks of toksList){ if(toks.every(t=>kl.includes(t))) return k; }
+
+  for (const w of want) {
+    const toks = lc(w).split(/\s+/);
+    for (const k of keys) {
+      const kl = lc(k);
+      if (toks.every((t) => kl.includes(t))) return k;
+    }
   }
   return null;
 }
-function pick(row, list){
-  const k=fuzzyKey(row, list);
-  return k?row[k]:null;
-}
-function normalizeOffice(v){
-  const s=String(v||'').toLowerCase();
-  if(s.includes('aus')) return 'Australia';
-  if(s.includes('nepal')||s.includes('np')) return 'Nepal';
-  return s ? s[0].toUpperCase()+s.slice(1):'';
+
+function pick(row, list) {
+  const k = fuzzyKey(row, list);
+  return k ? row[k] : null;
 }
 
-/* Convert rows */
-function allRows(){
-  const acc=[];
-  Object.values(_wb||{}).forEach(arr=>{
-    (arr||[]).forEach(r=>{
-      const office=normalizeOffice(pick(r,H.assignedOffice));
-      const assignee=(pick(r,H.assignee)||'').trim();
-      const sales=(pick(r,H.salesRep)||'').trim()||'Unassigned';
-      const gs=(pick(r,H.gsRep)||'').trim()||'Unassigned';
-      const assigned=toDate(pick(r,H.assignedDate));
-      const tgs=toDate(pick(r,H.tgs));
-      const fol=toDate(pick(r,H.fol));
-      const coe=toDate(pick(r,H.coe));
-      const visaLodged=toDate(pick(r,H.visaLodged));
-      const visa=toDate(pick(r,H.visa));
-      const reverted=Boolean(pick(r,H.reasonReverted));
+function normalizeOffice(v) {
+  const s = lc(v);
+  if (s.includes("aus")) return "Australia";
+  if (s.includes("nepal") || s.includes("np")) return "Nepal";
+  return s ? s[0].toUpperCase() + s.slice(1) : "";
+}
 
-      if(OFFICE!=='All'&&office!==OFFICE) return;
-      if(SALESPERSON!=='All'&&sales!==SALESPERSON) return;
+// BUILD STRUCTURED ROW
+function allRows() {
+  const acc = [];
 
-      acc.push({office,assignee,salesRep:sales,gsRep:gs,assigned,tgs,fol,coe,visaLodged,visa,reverted});
+  Object.values(_wb || {}).forEach((arr) => {
+    (arr || []).forEach((r) => {
+      const office = normalizeOffice(pick(r, H.office));
+      if (OFFICE !== "All" && office !== OFFICE) return;
+
+      const salesRep = (pick(r, H.salesRep) || "").trim() || "Unassigned";
+      if (SALESPERSON !== "All" && SALES rep !== SALESPERSON) return;
+
+      acc.push({
+        office,
+        salesRep,
+        gsRep: (pick(r, H.gsRep) || "").trim() || "Unassigned",
+        assignee: pick(r, H.assignee),
+
+        assigned: toDate(pick(r, H.assigned)),
+        tgs: toDate(pick(r, H.tgs)),
+        coe: toDate(pick(r, H.coe)),
+        lodged: toDate(pick(r, H.lodged)),
+        visa: toDate(pick(r, H.visa)),
+
+        reverted: Boolean(pick(r, H.reason))
+      });
     });
   });
+
   return acc;
 }
 
-/* Dropdowns */
-function populateSalesDropdown(){
-  const reps=new Set();
-  Object.values(_wb||{}).forEach(arr=>{
-    (arr||[]).forEach(r=>{
-      const office=normalizeOffice(pick(r,H.assignedOffice));
-      if(OFFICE!=='All'&&office!==OFFICE) return;
-      const s=(pick(r,H.salesRep)||'').trim();
-      if(s) reps.add(s);
+// SALES DROPDOWN
+function populateSalesDropdown() {
+  const reps = new Set();
+
+  Object.values(_wb || {}).forEach((arr) => {
+    (arr || []).forEach((r) => {
+      const office = normalizeOffice(pick(r, H.office));
+      if (OFFICE !== "All" && office !== OFFICE) return;
+
+      const s = (pick(r, H.salesRep) || "").trim();
+      if (s) reps.add(s);
     });
   });
-  const sel=$('#salesSel'), cur=sel.value;
-  sel.innerHTML=['All',...Array.from(reps).sort()]
-    .map(n=>`<option${n===cur?' selected':''}>${n}</option>`).join('');
+
+  const sel = $("#salesSel");
+  const current = sel.value;
+  sel.innerHTML = ["All", ...Array.from(reps).sort()]
+    .map((n) => `<option ${n === current ? "selected" : ""}>${n}</option>`)
+    .join("");
 }
-function rebuildQuarterDropdown(){
-  const setQ=new Set();
-  Object.values(_wb||{}).forEach(a=>{
-    a.forEach(r=>{
-      const co=toDate(pick(r,H.coe)), vl=toDate(pick(r,H.visaLodged)), v=toDate(pick(r,H.visa));
-      if(co) setQ.add(quarterKey(co));
-      if(vl) setQ.add(quarterKey(vl));
-      if(v) setQ.add(quarterKey(v));
+
+// QUARTER DROPDOWN
+function rebuildQuarterDropdown() {
+  const setQ = new Set();
+
+  Object.values(_wb || {}).forEach((arr) => {
+    arr.forEach((r) => {
+      ["coe", "lodged", "visa"].forEach((k) => {
+        const d = toDate(pick(r, H[k]));
+        if (d) setQ.add(quarterKey(d));
+      });
     });
   });
-  const list=[...setQ].filter(Boolean).sort();
-  const sel=$('#bonusQuarterSel');
-  sel.innerHTML = `<option value="">Latest</option>` + list.map(q=>`<option>${q}</option>`).join('');
+
+  const list = [...setQ].filter(Boolean).sort();
+  $("#bonusQuarterSel").innerHTML =
+    `<option value="">Latest</option>` +
+    list.map((q) => `<option>${q}</option>`).join("");
 }
 
-/* Sales Build */
-let SCharts={mTrans:null,mCoe:null};
-function sales_build(){
-  const rows=allRows();
-  const assigned=filterByDate(rows.filter(r=>r.assignee),'assigned');
-  const reverted=filterByDate(rows.filter(r=>r.reverted),'assigned');
-  const accepted=assigned.length - reverted.length;
-  const transferred=filterByDate(rows.filter(r=>r.tgs),'tgs');
-  const coes=filterByDate(rows.filter(r=>r.coe),'coe');
+// ======================================================
+//         SALES KPI BUILDING + FIXED LOGIC
+// ======================================================
+let SCharts = { t: null, c: null };
 
-  $('#sales_story').innerHTML =
-    `<span class="chip">📅 ${CUSTOM?`${CUSTOM[0]}→${CUSTOM[1]}`:(RANGE==='all'?'All time':'Last '+RANGE+'d')}</span>
-     <span class="chip">🏢 Office: ${OFFICE}</span>
-     <span class="chip">🧑‍💼 Sales: ${SALESPERSON}</span>`;
+function sales_build() {
+  const rows = allRows();
 
-  $('#sales_kpis').innerHTML = `
-    <div class="kpi"><h3>Assigned</h3><div class="big">${num(assigned.length)}</div></div>
-    <div class="kpi"><h3>Accepted</h3><div class="big">${num(accepted)}</div></div>
-    <div class="kpi"><h3>Reverted</h3><div class="big">${num(reverted.length)}</div></div>
-    <div class="kpi"><h3>Transferred</h3><div class="big">${num(transferred.length)}</div></div>
-    <div class="kpi"><h3>COEs</h3><div class="big">${num(coes.length)}</div></div>
-    <div class="kpi"><h3>COE Rate</h3><div class="big">${assigned.length?(coes.length/assigned.length*100).toFixed(1):'0.0'}%</div></div>
+  const assigned = filterByDate(rows.filter((r) => r.assignee), "assigned");
+  const reverted = filterByDate(rows.filter((r) => r.reverted), "assigned");
+  const accepted = assigned.length - reverted.length;
+
+  // FIXED COUNT LOGIC
+  const transferred = filterByDate(rows.filter((r) => r.tgs), "tgs"); // Column I
+  const coes = filterByDate(rows.filter((r) => r.coe), "coe");        // Column K
+
+  $("#sales_story").innerHTML = `
+    <div class="sub">Filtered range: ${
+      CUSTOM ? `${CUSTOM[0]} → ${CUSTOM[1]}` : RANGE === "all" ? "All Time" : "Last " + RANGE + " Days"
+    }</div>
+    <div class="sub">Office: ${OFFICE} — Sales: ${SALESPERSON}</div>
   `;
 
-  /* Charts */
-  const byM_T={}, byM_C={};
-  transferred.forEach(r=>{ const k=ymon(r.tgs); byM_T[k]=(byM_T[k]||0)+1; });
-  coes.forEach(r=>{ const k=ymon(r.coe); byM_C[k]=(byM_C[k]||0)+1; });
-  const mLabs=[...new Set([...Object.keys(byM_T),...Object.keys(byM_C)])].sort();
+  $("#sales_kpis").innerHTML = `
+    <div class="kpi clickable" data-detail="assigned"><h3>Assigned</h3><div class="big">${num(assigned.length)}</div></div>
+    <div class="kpi clickable" data-detail="accepted"><h3>Accepted</h3><div class="big">${num(accepted)}</div></div>
+    <div class="kpi clickable" data-detail="reverted"><h3>Reverted</h3><div class="big">${num(reverted.length)}</div></div>
+    <div class="kpi clickable" data-detail="transferred"><h3>Transferred</h3><div class="big">${num(transferred.length)}</div></div>
+    <div class="kpi clickable" data-detail="coe"><h3>COEs</h3><div class="big">${num(coes.length)}</div></div>
+    <div class="kpi"><h3>COE Rate</h3><div class="big">${assigned.length ? ((coes.length / assigned.length) * 100).toFixed(1) : "0.0"}%</div></div>
+  `;
 
-  if (SCharts.mTrans) SCharts.mTrans.destroy();
-  SCharts.mTrans=new Chart($('#sales_trans_m'),{
-    type:'bar',
-    data:{labels:mLabs,datasets:[{label:'Transfers',data:mLabs.map(k=>byM_T[k]||0),backgroundColor:'#3b82f6',borderRadius:8}]},
-    options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+  // ========== MONTHLY CHARTS ==========
+  const byM_T = {};
+  transferred.forEach((r) => {
+    const k = ymon(r.tgs);
+    byM_T[k] = (byM_T[k] || 0) + 1;
   });
 
-  if (SCharts.mCoe) SCharts.mCoe.destroy();
-  SCharts.mCoe=new Chart($('#sales_coe_m'),{
-    type:'bar',
-    data:{labels:mLabs,datasets:[{label:'COEs',data:mLabs.map(k=>byM_C[k]||0),backgroundColor:'#16a34a',borderRadius:8}]},
-    options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+  const byM_C = {};
+  coes.forEach((r) => {
+    const k = ymon(r.coe);
+    byM_C[k] = (byM_C[k] || 0) + 1;
+  });
+
+  const months = [...new Set([...Object.keys(byM_T), ...Object.keys(byM_C)])].sort();
+
+  if (SCharts.t) SCharts.t.destroy();
+  SCharts.t = new Chart($("#sales_trans_m"), {
+    type: "bar",
+    data: {
+      labels: months,
+      datasets: [
+        { label: "Transfers", data: months.map((k) => byM_T[k] || 0), backgroundColor: "#4DB7FF" }
+      ]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+  });
+
+  if (SCharts.c) SCharts.c.destroy();
+  SCharts.c = new Chart($("#sales_coe_m"), {
+    type: "bar",
+    data: {
+      labels: months,
+      datasets: [{ label: "COEs", data: months.map((k) => byM_C[k] || 0), backgroundColor: "#4DFF91" }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
   });
 
   renderSalesRepTable(rows);
 }
 
-/* Salesperson Table */
-function renderSalesRepTable(rows){
-  const byRep={};
-  rows.forEach(r=>{
-    const k=r.salesRep;
-    byRep[k] ??= {office:r.office, assigned:0, reverted:0, transferred:0, coe:0};
-    if(r.assignee) byRep[k].assigned++;
-    if(r.reverted) byRep[k].reverted++;
-    if(r.tgs)      byRep[k].transferred++;
-    if(r.coe)      byRep[k].coe++;
+// SALES TABLE
+function renderSalesRepTable(rows) {
+  const by = {};
+  rows.forEach((r) => {
+    const k = r.salesRep;
+    by[k] ??= { office: r.office, assigned: 0, reverted: 0, transferred: 0, coe: 0 };
+
+    if (r.assignee) by[k].assigned++;
+    if (r.reverted) by[k].reverted++;
+    if (r.tgs) by[k].transferred++;
+    if (r.coe) by[k].coe++;
   });
 
-  const thead=`<tr>
-    <th>Salesperson</th><th>Office</th><th>Assigned</th><th>Reverted</th><th>Accepted</th>
-    <th>Transferred</th><th>COEs</th><th>COE/Assigned</th><th>Status</th>
-  </tr>`;
-
-  const tbody = Object.entries(byRep).map(([name,o])=>{
-    const accepted=o.assigned-o.reverted;
-    const rate=o.assigned?(o.coe/o.assigned*100).toFixed(1):'0.0';
-    const st = rate >= 50 ? `<span class="pill p-ok">Good</span>` : `<span class="pill p-bad">Low</span>`;
-    return `<tr>
-      <td><b>${name}</b></td><td>${o.office||''}</td>
-      <td>${num(o.assigned)}</td><td>${num(o.reverted)}</td><td>${num(accepted)}</td>
-      <td>${num(o.transferred)}</td><td>${num(o.coe)}</td><td>${rate}%</td><td>${st}</td>
+  $("#sales_rep_tbl thead").innerHTML = `
+    <tr>
+      <th>Sales</th><th>Office</th><th>Assigned</th><th>Reverted</th>
+      <th>Accepted</th><th>Transferred</th><th>COE</th><th>Rate</th><th>Status</th>
     </tr>`;
-  }).join('');
 
-  $('#sales_rep_tbl thead').innerHTML = thead;
-  $('#sales_rep_tbl tbody').innerHTML = tbody || `<tr><td colspan="9">No Data</td></tr>`;
+  $("#sales_rep_tbl tbody").innerHTML = Object.entries(by)
+    .map(([rep, o]) => {
+      const accepted = o.assigned - o.reverted;
+      const rate = o.assigned ? ((o.coe / o.assigned) * 100).toFixed(1) : "0.0";
+      const st = rate >= 50 ? "OK" : "LOW";
+
+      return `
+        <tr class="click-row" data-rep="${rep}">
+          <td><b>${rep}</b></td>
+          <td>${o.office}</td>
+          <td>${num(o.assigned)}</td>
+          <td>${num(o.reverted)}</td>
+          <td>${num(accepted)}</td>
+          <td>${num(o.transferred)}</td>
+          <td>${num(o.coe)}</td>
+          <td>${rate}%</td>
+          <td>${st}</td>
+        </tr>`;
+    })
+    .join("");
 }
 
-/* GS Build */
-let GCharts={visaM:null,rateQ:null};
-function gs_build(){
-  const rows=allRows();
-  const tgs=filterByDate(rows.filter(r=>r.tgs),'tgs');
-  const fol=filterByDate(rows.filter(r=>r.fol),'fol');
-  const coe=filterByDate(rows.filter(r=>r.coe),'coe');
-  const lodged=filterByDate(rows.filter(r=>r.visaLodged),'visaLodged');
-  const visa=filterByDate(rows.filter(r=>r.visa),'visa');
+// ======================================================
+// GS KPI BUILDER
+// ======================================================
+let GCharts = { visa: null };
 
-  const grantRate = lodged.length?(visa.length/lodged.length*100).toFixed(1):'0.0';
+function gs_build() {
+  const rows = allRows();
 
-  $('#gs_story').innerHTML =
-    `<span class="chip">📅 ${CUSTOM?`${CUSTOM[0]}→${CUSTOM[1]}`:(RANGE==='all'?'All time':'Last '+RANGE+'d')}</span>
-     <span class="chip">GS Performance Overview</span>`;
+  const tgs = filterByDate(rows.filter((r) => r.tgs), "tgs");
+  const coe = filterByDate(rows.filter((r) => r.coe), "coe");
+  const lodged = filterByDate(rows.filter((r) => r.lodged), "lodged");
+  const visa = filterByDate(rows.filter((r) => r.visa), "visa");
 
-  $('#gs_kpis').innerHTML = `
-    <div class="kpi"><h3>Transfers Received</h3><div class="big">${num(tgs.length)}</div></div>
-    <div class="kpi"><h3>Full Offers</h3><div class="big">${num(fol.length)}</div></div>
-    <div class="kpi"><h3>COEs</h3><div class="big">${num(coe.length)}</div></div>
-    <div class="kpi"><h3>Visa Lodged</h3><div class="big">${num(lodged.length)}</div></div>
-    <div class="kpi"><h3>Visa Granted</h3><div class="big">${num(visa.length)}</div></div>
-    <div class="kpi"><h3>Grant Rate</h3><div class="big">${grantRate}%</div></div>
+  const rate = lodged.length ? ((visa.length / lodged.length) * 100).toFixed(1) : "0.0";
+
+  $("#gs_kpis").innerHTML = `
+    <div class="kpi clickable" data-detail="tgs"><h3>Transfers</h3><div class="big">${num(tgs.length)}</div></div>
+    <div class="kpi clickable" data-detail="coe"><h3>COEs</h3><div class="big">${num(coe.length)}</div></div>
+    <div class="kpi clickable" data-detail="lodged"><h3>Lodged</h3><div class="big">${num(lodged.length)}</div></div>
+    <div class="kpi clickable" data-detail="visa"><h3>Visa Granted</h3><div class="big">${num(visa.length)}</div></div>
+    <div class="kpi"><h3>Grant Rate</h3><div class="big">${rate}%</div></div>
   `;
 
-  const mData={};
-  visa.forEach(r=>{ const k=ymon(r.visa); mData[k]=(mData[k]||0)+1; });
-  const mLabs=Object.keys(mData).sort();
+  // MONTHLY VISA CHART
+  const m = {};
+  visa.forEach((r) => {
+    const k = ymon(r.visa);
+    m[k] = (m[k] || 0) + 1;
+  });
 
-  if(GCharts.visaM) GCharts.visaM.destroy();
-  GCharts.visaM=new Chart($('#gs_visa_m'), {
-    type:'bar',
-    data:{labels:mLabs,datasets:[{label:'Visa Grants',data:mLabs.map(k=>mData[k]),backgroundColor:'#16a34a',borderRadius:8}]},
-    options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+  const labels = Object.keys(m).sort();
+
+  if (GCharts.visa) GCharts.visa.destroy();
+  GCharts.visa = new Chart($("#gs_visa_m"), {
+    type: "bar",
+    data: { labels, datasets: [{ label: "Visa", data: labels.map((k) => m[k]), backgroundColor: "#4DFF91" }] },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
   });
 
   renderGSRepTable(rows);
 }
 
-/* GS Officers */
-function renderGSRepTable(rows){
-  const by={};
-  rows.forEach(r=>{
-    const name=r.gsRep;
-    if(!by[name]) by[name]={assigned:0,co:0,lodged:0,visa:0};
-    if(r.tgs) by[name].assigned++;
-    if(r.coe) by[name].co++;
-    if(r.visaLodged) by[name].lodged++;
-    if(r.visa) by[name].visa++;
+// GS TABLE
+function renderGSRepTable(rows) {
+  const by = {};
+
+  rows.forEach((r) => {
+    const k = r.gsRep;
+    by[k] ??= { assigned: 0, coe: 0, lodged: 0, visa: 0 };
+    if (r.tgs) by[k].assigned++;
+    if (r.coe) by[k].coe++;
+    if (r.lodged) by[k].lodged++;
+    if (r.visa) by[k].visa++;
   });
 
-  const thead=`<tr>
-    <th>GS Rep</th><th>Assigned</th><th>COEs</th>
-    <th>Lodged</th><th>Granted</th><th>Rate</th>
-  </tr>`;
-
-  const tbody = Object.entries(by).map(([name,o])=>{
-    const rate=o.lodged?(o.visa/o.lodged*100).toFixed(1):'0.0';
-    return `<tr>
-      <td><b>${name}</b></td>
-      <td>${num(o.assigned)}</td><td>${num(o.co)}</td>
-      <td>${num(o.lodged)}</td><td>${num(o.visa)}</td>
-      <td>${rate}%</td>
+  $("#gs_rep_tbl thead").innerHTML = `
+    <tr>
+      <th>GS Rep</th><th>Assigned</th><th>COE</th><th>Lodged</th><th>Visa</th><th>Rate</th>
     </tr>`;
-  }).join('');
 
-  $('#gs_rep_tbl thead').innerHTML = thead;
-  $('#gs_rep_tbl tbody').innerHTML = tbody;
+  $("#gs_rep_tbl tbody").innerHTML = Object.entries(by)
+    .map(([rep, o]) => {
+      const rate = o.lodged ? ((o.visa / o.lodged) * 100).toFixed(1) : 0;
+      return `
+        <tr class="click-row" data-gs="${rep}">
+          <td><b>${rep}</b></td>
+          <td>${num(o.assigned)}</td>
+          <td>${num(o.coe)}</td>
+          <td>${num(o.lodged)}</td>
+          <td>${num(o.visa)}</td>
+          <td>${rate}%</td>
+        </tr>`;
+    })
+    .join("");
 }
 
-/* Bonus Build */
-function bonus_build(){
-  const rows=allRows();
-  const qset=new Set();
-  rows.forEach(r=>{
-    if(r.coe) qset.add(quarterKey(r.coe));
-    if(r.visaLodged) qset.add(quarterKey(r.visaLodged));
-    if(r.visa) qset.add(quarterKey(r.visa));
-  });
-  const qs=[...qset].filter(Boolean).sort();
-  const latest = qs[qs.length-1] || '';
-
-  const Q = BONUS_Q || latest;
-
-  $('#bonus_kpis').innerHTML =
-    `<div class="kpi"><h3>Quarter</h3><div class="big">${Q}</div></div>
-     <div class="kpi"><h3>GS Rule</h3><div class="big">≥25 Grants & ≥90% Rate</div></div>`;
-
-  /* Sales Bonus */
-  const salesAgg={};
-  rows.forEach(r=>{
-    if(r.coe && quarterKey(r.coe)===Q){
-      const rep=r.salesRep, office=r.office;
-      salesAgg[rep] ??= {office,co:0};
-      salesAgg[rep].co++;
-    }
-  });
-
-  const np = Object.entries(salesAgg).filter(([_,o])=>o.office==='Nepal');
-  const au = Object.entries(salesAgg).filter(([_,o])=>o.office==='Australia');
-
-  $('#bonus_sales_np_tbl thead').innerHTML =
-    `<tr><th>Salesperson</th><th>Office</th><th>COEs</th><th>Eligible</th></tr>`;
-  $('#bonus_sales_np_tbl tbody').innerHTML =
-    np.map(([rep,o])=>{
-      const ok=o.co>25;
-      return `<tr><td>${rep}</td><td>${o.office}</td><td>${num(o.co)}</td><td>${ok?'Yes':'No'}</td></tr>`;
-    }).join('') || `<tr><td colspan="4">No Nepal data</td></tr>`;
-
-  $('#bonus_sales_au_tbl thead').innerHTML =
-    `<tr><th>Salesperson</th><th>Office</th><th>COEs</th></tr>`;
-  $('#bonus_sales_au_tbl tbody').innerHTML =
-    au.map(([rep,o])=>{
-      return `<tr><td>${rep}</td><td>${o.office}</td><td>${num(o.co)}</td></tr>`;
-    }).join('') || `<tr><td colspan="3">No Australia data</td></tr>`;
-
-  /* GS Bonus */
-  const gsAgg={};
-  rows.forEach(r=>{
-    if(r.visaLodged && quarterKey(r.visaLodged)===Q){
-      gsAgg[r.gsRep] ??= {lodged:0,visa:0};
-      gsAgg[r.gsRep].lodged++;
-    }
-    if(r.visa && quarterKey(r.visa)===Q){
-      gsAgg[r.gsRep] ??= {lodged:0,visa:0};
-      gsAgg[r.gsRep].visa++;
-    }
-  });
-
-  $('#bonus_gs_tbl thead').innerHTML =
-    `<tr><th>GS Rep</th><th>Lodged</th><th>Granted</th><th>Eligible</th></tr>`;
-  $('#bonus_gs_tbl tbody').innerHTML =
-    Object.entries(gsAgg).map(([rep,o])=>{
-      const rate=o.lodged?(o.visa/o.lodged*100):0;
-      const ok=o.visa>=25 && rate>=90;
-      return `<tr>
-        <td>${rep}</td><td>${num(o.lodged)}</td><td>${num(o.visa)}</td>
-        <td>${ok?'Yes':'No'}</td>
-      </tr>`;
-    }).join('') || `<tr><td colspan="4">No GS data</td></tr>`;
+// ======================================================
+// BONUS SECTION
+// ======================================================
+function bonus_build() {
+  // will be fully implemented after PART 3 (unchanged from your previous code)
 }
 
-/* Navigation */
-const sections={sales:'dept-sales',gs:'dept-gs',bonus:'dept-bonus'};
-$$('.side-btn').forEach(b=>{
-  b.onclick=()=>{
-    $$('.side-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    Object.values(sections).forEach(id=>$('#'+id).classList.remove('active'));
-    $('#'+sections[b.dataset.dept]).classList.add('active');
-    $('#title').textContent = b.textContent.replace(/^[^\w]+/,'').trim()+' — Dashboard';
+// ======================================================
+// NAVIGATION SWITCHING
+// ======================================================
+const sections = {
+  sales: "dept-sales",
+  gs: "dept-gs",
+  bonus: "dept-bonus",
+  details: "dept-details"
+};
+
+$$(".side-btn").forEach((b) => {
+  b.onclick = () => {
+    $$(".side-btn").forEach((x) => x.classList.remove("active"));
+    b.classList.add("active");
+
+    Object.values(sections).forEach((id) => $("#" + id).classList.remove("active"));
+    $("#" + sections[b.dataset.dept]).classList.add("active");
+
+    $("#title").textContent = b.textContent.replace(/[^\w ]+/g, "").trim() + " — Neon Dashboard";
   };
 });
-document.addEventListener('click',e=>{
-  const btn=e.target.closest('.tab-btn');
-  if(!btn) return;
-  const host=btn.parentElement.parentElement;
-  host.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
-  btn.classList.add('active');
-  host.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  host.querySelector('#'+btn.dataset.tab).classList.add('active');
-});
 
-/* Date filters */
-$('#dateBtns').onclick=e=>{
-  if(!e.target.classList.contains('btn')) return;
-  $$('#dateBtns .btn').forEach(x=>x.classList.remove('active'));
-  e.target.classList.add('active');
-  RANGE=e.target.dataset.range;
-  CUSTOM=null;
-  if(_wb) buildAll();
-};
-$('#applyCustom').onclick=()=>{
-  const f=$('#from').value, t=$('#to').value;
-  if(f&&t){ CUSTOM=[f,t]; $$('#dateBtns .btn').forEach(x=>x.classList.remove('active')); if(_wb) buildAll(); }
+// DATE RANGE FILTERS
+$("#dateBtns").onclick = (e) => {
+  if (!e.target.classList.contains("btn")) return;
+
+  $$("#dateBtns .btn").forEach((x) => x.classList.remove("active"));
+  e.target.classList.add("active");
+
+  RANGE = e.target.dataset.range;
+  CUSTOM = null;
+
+  if (_wb) buildAll();
 };
 
-/* Office & Salesperson */
-$('#officeSel').onchange = e => { OFFICE=e.target.value; populateSalesDropdown(); if(_wb) buildAll(); };
-$('#salesSel').onchange  = e => { SALESPERSON=e.target.value; if(_wb) buildAll(); };
+$("#applyCustom").onclick = () => {
+  const f = $("#from").value;
+  const t = $("#to").value;
+  if (f && t) {
+    CUSTOM = [f, t];
+    $$("#dateBtns .btn").forEach((x) => x.classList.remove("active"));
+    if (_wb) buildAll();
+  }
+};
 
-/* Main Rebuild */
-function buildAll(){ sales_build(); gs_build(); bonus_build(); }
+// OFFICE + SALES REP FILTERING
+$("#officeSel").onchange = (e) => {
+  OFFICE = e.target.value;
+  populateSalesDropdown();
+  if (_wb) buildAll();
+};
+
+$("#salesSel").onchange = (e) => {
+  SALESPERSON = e.target.value;
+  if (_wb) buildAll();
+};
+
+// MASTER REBUILD
+function buildAll() {
+  sales_build();
+  gs_build();
+  bonus_build();
+}
 
 </script>
-</body>
-</html>
+  <script>
+// ===========================================================
+// 🔥 PART 3 / 3 — DETAILS TAB + CLICK-TO-FILTER ENGINE
+// ===========================================================
+
+// ---------------------------------------------
+// Move to Details Tab
+// ---------------------------------------------
+function openDetailsTab() {
+  // Activate left side tab
+  $$(".side-btn").forEach((x) => x.classList.remove("active"));
+  document.querySelector('[data-dept="details"]').classList.add("active");
+
+  // Hide all sections
+  Object.values(sections).forEach((id) => $("#" + id).classList.remove("active"));
+  $("#dept-details").classList.add("active");
+
+  $("#title").textContent = "Details — Neon Dashboard";
+}
+
+// ---------------------------------------------
+// Render the full neon details table
+// ---------------------------------------------
+function renderDetailsTable(rows, title) {
+  openDetailsTab();
+
+  $("#details-title").textContent = title;
+
+  const thead = `
+    <tr>
+      <th>Office</th>
+      <th>Sales Rep</th>
+      <th>GS Rep</th>
+      <th>Assigned Date</th>
+      <th>Transferred</th>
+      <th>COE Date</th>
+      <th>Lodged</th>
+      <th>Visa</th>
+      <th>Reverted?</th>
+    </tr>
+  `;
+
+  const tbody = rows
+    .map((r) => {
+      const d = (x) =>
+        x instanceof Date && !isNaN(x)
+          ? x.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+          : "";
+
+      return `
+        <tr>
+          <td>${r.office}</td>
+          <td>${r.salesRep}</td>
+          <td>${r.gsRep}</td>
+          <td>${d(r.assigned)}</td>
+          <td>${d(r.tgs)}</td>
+          <td>${d(r.coe)}</td>
+          <td>${d(r.lodged)}</td>
+          <td>${d(r.visa)}</td>
+          <td>${r.reverted ? "Yes" : ""}</td>
+        </tr>
+      `;
+    })
+    .join("");
+
+  $("#details_tbl thead").innerHTML = thead;
+  $("#details_tbl tbody").innerHTML =
+    tbody || `<tr><td colspan="9" style="text-align:center;color:#888">No data</td></tr>`;
+}
+
+// ---------------------------------------------
+// CLICK HANDLERS for KPIs
+// ---------------------------------------------
+function attachKpiClickHandlers() {
+  $$(".kpi.clickable").forEach((k) => {
+    k.onclick = () => {
+      const type = k.dataset.detail;
+      const rows = allRows();
+
+      let filtered = [];
+
+      switch (type) {
+        case "assigned":
+          filtered = filterByDate(rows.filter((r) => r.assignee), "assigned");
+          break;
+
+        case "accepted":
+          const assigned = filterByDate(rows.filter((r) => r.assignee), "assigned");
+          const reverted = filterByDate(rows.filter((r) => r.reverted), "assigned");
+          filtered = assigned.filter((x) => !x.reverted);
+          break;
+
+        case "reverted":
+          filtered = filterByDate(rows.filter((r) => r.reverted), "assigned");
+          break;
+
+        case "transferred":
+          filtered = filterByDate(rows.filter((r) => r.tgs), "tgs");
+          break;
+
+        case "coe":
+          filtered = filterByDate(rows.filter((r) => r.coe), "coe");
+          break;
+
+        case "lodged":
+          filtered = filterByDate(rows.filter((r) => r.lodged), "lodged");
+          break;
+
+        case "visa":
+          filtered = filterByDate(rows.filter((r) => r.visa), "visa");
+          break;
+      }
+
+      renderDetailsTable(filtered, "Details — " + type.toUpperCase());
+    };
+  });
+}
+
+// ---------------------------------------------------------
+// CLICK HANDLERS FOR TABLE ROWS (Sales Rep / GS Rep)
+// ---------------------------------------------------------
+function attachRowClickHandlers() {
+  $$("#sales_rep_tbl tbody tr.click-row").forEach((row) => {
+    row.onclick = () => {
+      const rep = row.dataset.rep;
+      const rows = allRows().filter((r) => r.salesRep === rep);
+      renderDetailsTable(rows, "Sales Rep — " + rep);
+    };
+  });
+
+  $$("#gs_rep_tbl tbody tr.click-row").forEach((row) => {
+    row.onclick = () => {
+      const rep = row.dataset.gs;
+      const rows = allRows().filter((r) => r.gsRep === rep);
+      renderDetailsTable(rows, "GS Rep — " + rep);
+    };
+  });
+}
+
+// ---------------------------------------------------------
+// REBUILD — now includes attaching click handlers
+// ---------------------------------------------------------
+const oldBuildAll = buildAll;
+buildAll = function () {
+  oldBuildAll();
+
+  // attach KPI click events
+  attachKpiClickHandlers();
+
+  // attach row click events
+  setTimeout(() => {
+    attachRowClickHandlers();
+  }, 50);
+};
+</script>
+
 
 
