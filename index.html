@@ -577,32 +577,54 @@ function computeGSAlerts() {
 
     flatList.forEach(x => {
 
-        let stage = "Completed";
-        let days = 0;
+        // ❌ Not transferred → NOT alert
+        if (!x["transferred to gs date"]) return;
+
+        // ❌ Visa lodged already → remove from alerts
+        if (x["visa lodged date"]) return;
+
+        let stage = "";
+        let refDate = null;
 
         const tgs = parseDate(x["transferred to gs date"]);
         const full = parseDate(x["full offer date"]);
         const coe = parseDate(x["coe obtained date"]);
-        const visa = parseDate(x["visa lodged date"]);
 
-        let refDate = null;
+        if (tgs && !full) {
+            stage = "Waiting Full Offer";
+            refDate = tgs;
+        }
+        else if (full && !coe) {
+            stage = "Waiting COE";
+            refDate = full;
+        }
+        else if (coe && !x["visa lodged date"]) {
+            stage = "Waiting Visa Lodged";
+            refDate = coe;
+        }
+        else {
+            return; // ❌ No pending stage → Not an alert
+        }
 
-        if (tgs && !full) { stage = "Waiting Full Offer"; refDate = tgs; }
-        else if (full && !coe) { stage = "Waiting COE"; refDate = full; }
-        else if (coe && !visa) { stage = "Waiting Visa Lodged"; refDate = coe; }
+        // Calculate pending days
+        const days = diffDays(new Date(), refDate);
 
-        if (refDate) days = diffDays(new Date(), refDate);
-
-        let cls = (days >= 15) ? "row-alert" : (days >= 5 ? "row-wait" : "row-ok");
+        // Color logic
+        let cls =
+            (days >= 15)
+                ? "row-alert"
+                : (days >= 5 ? "row-wait" : "row-ok");
 
         const tr = document.createElement("tr");
         tr.className = cls;
+
         tr.innerHTML = `
             <td>${x["client name"] || ""}</td>
             <td>${stage}</td>
             <td>${days}</td>
             <td>${x["gs lead"] || ""}</td>
         `;
+
         body.appendChild(tr);
     });
 }
