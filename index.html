@@ -1,332 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<title>Sales Neon Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: #050A1F;
-  color: #E6EEFF;
-}
-
-/* LAYOUT */
-.container {
-  display: flex;
-  height: 100vh;
-}
-
-/* SIDEBAR */
-.sidebar {
-  width: 220px;
-  background: #081026;
-  padding: 20px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border-right: 1px solid #0d1a40;
-}
-
-.side-btn {
-  padding: 12px 10px;
-  border-radius: 10px;
-  background: #0A1535;
-  color: #AACCFF;
-  cursor: pointer;
-  border: 1px solid #11245c;
-  transition: 0.25s;
-  text-align: left;
-}
-
-.side-btn.active {
-  background: #0e1d4d;
-  border-color: #1d3b99;
-  box-shadow: 0 0 12px #2699ff;
-}
-
-/* MAIN PANEL */
-.main {
-  flex: 1;
-  padding: 25px;
-  overflow-y: auto;
-}
-
-h1 {
-  font-size: 26px;
-  margin-bottom: 20px;
-  color: #9EC5FF;
-  text-shadow: 0 0 12px #007bff;
-}
-
-/* FILTER BAR */
-.filter-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.btn {
-  padding: 8px 15px;
-  background: #0a1535;
-  border: 1px solid #12306A;
-  color: #AACCFF;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.btn.active {
-  background: #007BFF;
-  border-color: #1a75ff;
-  color: white;
-  box-shadow: 0 0 12px #008cff;
-}
-
-input[type="date"] {
-  padding: 6px 10px;
-  background: #0A1535;
-  border: 1px solid #12306A;
-  color: #AACCFF;
-  border-radius: 6px;
-}
-
-/* KPI CARD */
-.kpi-card {
-  width: 220px;
-  padding: 25px;
-  border-radius: 16px;
-  background: #0A1535;
-  border: 1px solid #1a2f63;
-  box-shadow: 0 0 25px #002a80 inset;
-  text-align: center;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-.kpi-card:hover {
-  box-shadow: 0 0 25px #007bff;
-}
-
-.kpi-title {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #7AB8FF;
-}
-
-.kpi-number {
-  font-size: 42px;
-  font-weight: bold;
-  color: #E6EEFF;
-}
-
-/* DETAILS TABLE */
-#details-section {
-  display: none;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-thead {
-  background: #0f234d;
-}
-
-th, td {
-  padding: 10px;
-  border-bottom: 1px solid #1b3266;
-}
-
-</style>
+  <meta charset="UTF-8">
+  <title>API Test</title>
 </head>
 
-<body>
+<body style="font-family: Arial; padding: 30px;">
 
-<div class="container">
+<h2>Cloudflare API Test</h2>
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="side-btn active" data-tab="sales">Sales</div>
-    <div class="side-btn" data-tab="details">Details</div>
-  </div>
+<button onclick="testAPI()">Load Assigned Count</button>
 
-  <!-- MAIN PANEL -->
-  <div class="main">
+<h3 id="result">Result will show here…</h3>
 
-    <h1 id="title">Sales Overview</h1>
-
-    <!-- FILTERS -->
-    <div class="filter-row">
-      <button class="btn active" data-range="all">All</button>
-      <button class="btn" data-range="30">30 Days</button>
-      <button class="btn" data-range="60">60 Days</button>
-      <button class="btn" data-range="90">90 Days</button>
-
-      <input type="date" id="from">
-      <input type="date" id="to">
-      <button class="btn" id="applyCustom">Apply</button>
-    </div>
-
-    <!-- SALES OVERVIEW -->
-    <div id="sales-section">
-
-      <div class="kpi-card" id="assignedCard">
-        <div class="kpi-title">Assigned</div>
-        <div class="kpi-number" id="assignedNum">0</div>
-      </div>
-
-    </div>
-
-    <!-- DETAILS SECTION -->
-    <div id="details-section">
-      <h1>Details</h1>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Sales Rep</th>
-            <th>Assigned Date</th>
-            <th>GS Lead</th>
-          </tr>
-        </thead>
-        <tbody id="detailsBody"></tbody>
-      </table>
-    </div>
-
-  </div>
-</div>
 <script>
 const API = "https://salesdashboard.ashishoct34.workers.dev/";
 
-let RAW_ROWS = [];
-let RANGE = "all";
-let CUSTOM = null;
+async function testAPI() {
+  document.getElementById("result").textContent = "Loading…";
 
-// HELPERS
-const toDate = v => {
-  if (!v) return null;
-  const d = new Date(v);
-  return isNaN(d) ? null : d;
-};
-const fmt = n => new Intl.NumberFormat("en-IN").format(n);
+  try {
+    const res = await fetch(API);
+    const json = await res.json();
 
-// LOAD API
-async function loadAPI() {
-  const res = await fetch(API);
-  const json = await res.json();
-  RAW_ROWS = [];
+    let count = 0;
 
-  Object.values(json.data).forEach(arr => {
-    arr.forEach(r => {
-      RAW_ROWS.push({
-        salesRep: r["Sales Rep"] || "",
-        assigned: toDate(r["Assigned Date"]),
-        gsLead: r["GS Lead"] || ""
+    // Combine all rows from Sweta + Anusha + Kumkum
+    Object.values(json.data).forEach(arr => {
+      arr.forEach(r => {
+        if (r["assigned date"] || r["assigned date"] === "") {
+          // Any row that has Assigned Date column should be counted
+          const d = r["assigned date"];
+          if (d && d.trim() !== "") count++;
+        }
       });
     });
-  });
 
-  buildAssigned();
-}
+    document.getElementById("result").textContent =
+      "ASSIGNED COUNT = " + count;
 
-window.onload = loadAPI;
-
-// FILTER LOGIC
-function inRange(d, today) {
-  if (!d) return false;
-
-  if (CUSTOM) {
-    const f = new Date(CUSTOM[0]);
-    const t = new Date(CUSTOM[1]);
-    return d >= f && d <= t;
+  } catch (e) {
+    document.getElementById("result").textContent = "ERROR: " + e.message;
   }
-
-  if (RANGE === "all") return true;
-
-  const n = Number(RANGE);
-  const start = new Date(today);
-  start.setDate(today.getDate() - n);
-  return d >= start && d <= today;
 }
-
-// BUILD ASSIGNED CARD
-function buildAssigned() {
-  const today = new Date();
-
-  const assigned = RAW_ROWS.filter(r =>
-    r.assigned && inRange(r.assigned, today)
-  );
-
-  document.getElementById("assignedNum").textContent = fmt(assigned.length);
-
-  // CLICK → DETAILS
-  document.getElementById("assignedCard").onclick = () => showDetails(assigned);
-}
-
-// DETAILS PAGE
-function showDetails(rows) {
-  document.getElementById("sales-section").style.display = "none";
-  document.getElementById("details-section").style.display = "block";
-  document.getElementById("title").textContent = "Details";
-
-  const TB = document.getElementById("detailsBody");
-  TB.innerHTML = rows
-    .map(r => `
-      <tr>
-        <td>${r.salesRep}</td>
-        <td>${r.assigned ? r.assigned.toLocaleDateString("en-GB") : ""}</td>
-        <td>${r.gsLead}</td>
-      </tr>
-    `)
-    .join("");
-}
-
-// NAVIGATION
-document.querySelectorAll(".side-btn").forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll(".side-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    if (btn.dataset.tab === "sales") {
-      document.getElementById("sales-section").style.display = "block";
-      document.getElementById("details-section").style.display = "none";
-      document.getElementById("title").textContent = "Sales Overview";
-    }
-    if (btn.dataset.tab === "details") {
-      document.getElementById("sales-section").style.display = "none";
-      document.getElementById("details-section").style.display = "block";
-      document.getElementById("title").textContent = "Details";
-    }
-  };
-});
-
-// DATE FILTER BUTTONS
-document.querySelectorAll(".btn[data-range]").forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll(".btn[data-range]").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    RANGE = btn.dataset.range;
-    CUSTOM = null;
-    buildAssigned();
-  };
-});
-
-// CUSTOM DATE
-document.getElementById("applyCustom").onclick = () => {
-  const f = document.getElementById("from").value;
-  const t = document.getElementById("to").value;
-  if (f && t) {
-    CUSTOM = [f, t];
-    document.querySelectorAll(".btn[data-range]").forEach(b => b.classList.remove("active"));
-    buildAssigned();
-  }
-};
 </script>
 
-</body></html>
+</body>
+</html>
