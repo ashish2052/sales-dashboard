@@ -1,48 +1,417 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>API Test</title>
+<meta charset="UTF-8">
+<title>Sales Neon Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #050A1F;
+  color: #E6EEFF;
+}
+
+/* Layout */
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: #081026;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-right: 1px solid #0d1a40;
+}
+
+.side-btn {
+  padding: 12px 10px;
+  border-radius: 10px;
+  background: #0A1535;
+  color: #AACCFF;
+  cursor: pointer;
+  border: 1px solid #11245c;
+  transition: 0.25s;
+}
+
+.side-btn.active {
+  background: #0e1d4d;
+  border-color: #1d3b99;
+  box-shadow: 0 0 12px #2699ff;
+}
+
+/* Main */
+.main {
+  flex: 1;
+  padding: 25px;
+  overflow-y: auto;
+}
+
+h1 {
+  font-size: 30px;
+  margin-bottom: 25px;
+  color: #9EC5FF;
+  text-shadow: 0 0 12px #007bff;
+}
+
+.filter-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.btn {
+  padding: 8px 15px;
+  background: #0a1535;
+  border: 1px solid #12306A;
+  color: #AACCFF;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn.active {
+  background: #007BFF;
+  border-color: #1a75ff;
+  color: white;
+  box-shadow: 0 0 12px #008cff;
+}
+
+/* KPI Cards */
+.kpi-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.kpi {
+  width: 180px;
+  padding: 25px;
+  border-radius: 16px;
+  background: #0A1535;
+  border: 1px solid #1a2f63;
+  box-shadow: 0 0 25px #002a80 inset;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.kpi:hover {
+  box-shadow: 0 0 25px #007bff;
+}
+
+.kpi-title {
+  font-size: 17px;
+  margin-bottom: 8px;
+  color: #7AB8FF;
+}
+
+.kpi-number {
+  font-size: 38px;
+  font-weight: bold;
+}
+
+/* Details Section */
+#details-section {
+  display: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #1b3266;
+}
+
+thead {
+  background: #0f234d;
+}
+
+.chart-box {
+  width: 500px;
+  height: 260px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #0A1535;
+  border: 1px solid #1a2f63;
+  box-shadow: 0 0 25px #002a80 inset;
+}
+
+</style>
 </head>
 
-<body style="font-family: Arial; padding: 30px;">
+<body>
 
-<h2>Cloudflare API Test</h2>
+<div class="container">
 
-<button onclick="testAPI()">Load Assigned Count</button>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="side-btn active" data-tab="sales">Sales</div>
+    <div class="side-btn" data-tab="details">Details</div>
+  </div>
 
-<h3 id="result">Result will show here…</h3>
+  <!-- Main Panel -->
+  <div class="main">
+
+    <h1 id="title">Sales Overview</h1>
+
+    <!-- Filters -->
+    <div class="filter-row">
+      <button class="btn active" data-range="all">All</button>
+      <button class="btn" data-range="30">30 Days</button>
+      <button class="btn" data-range="60">60 Days</button>
+      <button class="btn" data-range="90">90 Days</button>
+
+      <input type="date" id="from">
+      <input type="date" id="to">
+      <button class="btn" id="applyCustom">Apply</button>
+    </div>
+
+    <!-- Sales Section -->
+    <div id="sales-section">
+
+      <div class="kpi-row">
+        <div class="kpi" data-kpi="assigned">
+          <div class="kpi-title">Assigned</div>
+          <div class="kpi-number" id="k_assigned">0</div>
+        </div>
+
+        <div class="kpi" data-kpi="accepted">
+          <div class="kpi-title">Accepted</div>
+          <div class="kpi-number" id="k_accepted">0</div>
+        </div>
+
+        <div class="kpi" data-kpi="reverted">
+          <div class="kpi-title">Reverted</div>
+          <div class="kpi-number" id="k_reverted">0</div>
+        </div>
+
+        <div class="kpi" data-kpi="transferred">
+          <div class="kpi-title">Transferred</div>
+          <div class="kpi-number" id="k_transferred">0</div>
+        </div>
+
+        <div class="kpi" data-kpi="coe">
+          <div class="kpi-title">COEs</div>
+          <div class="kpi-number" id="k_coe">0</div>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <canvas id="assignedChart"></canvas>
+      </div>
+
+    </div>
+
+    <!-- Details -->
+    <div id="details-section">
+      <h1>Details</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Sales Rep</th>
+            <th>Assigned</th>
+            <th>Transferred</th>
+            <th>COE</th>
+            <th>GS Lead</th>
+          </tr>
+        </thead>
+        <tbody id="detailsBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
 
 <script>
 const API = "https://salesdashboard.ashishoct34.workers.dev/";
 
-async function testAPI() {
-  document.getElementById("result").textContent = "Loading…";
+let ROWS = [];
+let RANGE = "all";
+let CUSTOM = null;
 
-  try {
-    const res = await fetch(API);
-    const json = await res.json();
+const toDate = v => v ? new Date(v) : null;
 
-    let count = 0;
+// LOAD API
+window.onload = loadAPI;
 
-    // Combine all rows from Sweta + Anusha + Kumkum
-    Object.values(json.data).forEach(arr => {
-      arr.forEach(r => {
-        if (r["assigned date"] || r["assigned date"] === "") {
-          // Any row that has Assigned Date column should be counted
-          const d = r["assigned date"];
-          if (d && d.trim() !== "") count++;
-        }
+async function loadAPI() {
+  const res = await fetch(API);
+  const json = await res.json();
+
+  ROWS = [];
+
+  Object.values(json.data).forEach(arr => {
+    arr.forEach(r => {
+      ROWS.push({
+        salesRep: r["sales rep"] || "",
+        assigned: toDate(r["assigned date"]),
+        transferred: toDate(r["transferred to gs date"]),
+        coe: toDate(r["coe obtained date"]),
+        gsLead: r["gs lead"] || ""
       });
     });
+  });
 
-    document.getElementById("result").textContent =
-      "ASSIGNED COUNT = " + count;
-
-  } catch (e) {
-    document.getElementById("result").textContent = "ERROR: " + e.message;
-  }
+  buildSales();
 }
+
+// DATE RANGE FILTER
+function inRange(d, today) {
+  if (!d) return false;
+
+  if (CUSTOM) {
+    const f = new Date(CUSTOM[0]);
+    const t = new Date(CUSTOM[1]);
+    return d >= f && d <= t;
+  }
+
+  if (RANGE === "all") return true;
+
+  const days = Number(RANGE);
+  const s = new Date(today);
+  s.setDate(s.getDate() - days);
+  return d >= s && d <= today;
+}
+
+// BUILD SALES
+function buildSales() {
+  const today = new Date();
+
+  const assigned = ROWS.filter(r => r.assigned && inRange(r.assigned, today));
+  const reverted = ROWS.filter(r => r.assigned && r.transferred == null && r.coe == null && inRange(r.assigned, today));
+  const accepted = assigned.length - reverted.length;
+  const transferred = ROWS.filter(r => r.transferred && inRange(r.transferred, today));
+  const coe = ROWS.filter(r => r.coe && inRange(r.coe, today));
+
+  document.getElementById("k_assigned").textContent = assigned.length;
+  document.getElementById("k_accepted").textContent = accepted;
+  document.getElementById("k_reverted").textContent = reverted.length;
+  document.getElementById("k_transferred").textContent = transferred.length;
+  document.getElementById("k_coe").textContent = coe.length;
+
+  buildChart(assigned);
+  attachCardClicks({assigned, acceptedRows: assigned.filter(r=>!r.reverted), reverted, transferred, coe});
+}
+
+// CHART
+let assignedChart;
+function buildChart(data) {
+  const byMonth = {};
+
+  data.forEach(r => {
+    const d = r.assigned;
+    if (!d) return;
+    const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    byMonth[k] = (byMonth[k] || 0) + 1;
+  });
+
+  const labels = Object.keys(byMonth);
+  const values = labels.map(k => byMonth[k]);
+
+  if (assignedChart) assignedChart.destroy();
+
+  assignedChart = new Chart(document.getElementById("assignedChart"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Assigned",
+        data: values,
+        backgroundColor: "#4DB7FF"
+      }]
+    },
+    options: { plugins: { legend: { display: false } } }
+  });
+}
+
+// CLICK → DETAILS
+function attachCardClicks(obj) {
+  document.querySelectorAll(".kpi").forEach(k => {
+    k.onclick = () => {
+      const type = k.dataset.kpi;
+      let rows = [];
+
+      if (type === "assigned") rows = obj.assigned;
+      if (type === "accepted") rows = obj.acceptedRows;
+      if (type === "reverted") rows = obj.reverted;
+      if (type === "transferred") rows = obj.transferred;
+      if (type === "coe") rows = obj.coe;
+
+      showDetails(rows);
+    };
+  });
+}
+
+function showDetails(rows) {
+  document.getElementById("sales-section").style.display = "none";
+  document.getElementById("details-section").style.display = "block";
+  document.getElementById("title").textContent = "Details";
+
+  const TB = document.getElementById("detailsBody");
+  TB.innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.salesRep}</td>
+      <td>${r.assigned ? r.assigned.toLocaleDateString("en-GB") : ""}</td>
+      <td>${r.transferred ? r.transferred.toLocaleDateString("en-GB") : ""}</td>
+      <td>${r.coe ? r.coe.toLocaleDateString("en-GB") : ""}</td>
+      <td>${r.gsLead}</td>
+    </tr>
+  `).join("");
+}
+
+// NAV
+document.querySelectorAll(".side-btn").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".side-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+
+    if(btn.dataset.tab==="sales"){
+      document.getElementById("sales-section").style.display="block";
+      document.getElementById("details-section").style.display="none";
+      document.getElementById("title").textContent="Sales Overview";
+    }
+    if(btn.dataset.tab==="details"){
+      document.getElementById("sales-section").style.display="none";
+      document.getElementById("details-section").style.display="block";
+      document.getElementById("title").textContent="Details";
+    }
+  };
+});
+
+// DATE FILTER BUTTONS
+document.querySelectorAll(".btn[data-range]").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".btn[data-range]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    RANGE=btn.dataset.range;
+    CUSTOM=null;
+    buildSales();
+  };
+});
+
+// CUSTOM DATE
+document.getElementById("applyCustom").onclick=()=>{
+  const f=document.getElementById("from").value;
+  const t=document.getElementById("to").value;
+  if(f&&t){
+    CUSTOM=[f,t];
+    document.querySelectorAll(".btn[data-range]").forEach(b=>b.classList.remove("active"));
+    buildSales();
+  }
+};
 </script>
 
 </body>
