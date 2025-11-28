@@ -612,23 +612,23 @@
                         <div id="repContent">
                             <!-- Dynamic Rep Content Injected Here -->
                             <div class="cards-grid">
-                                <div class="stat-card">
+                                <div class="stat-card" onclick="filterRepDetails('active')">
                                     <div class="stat-title">Active Clients</div>
                                     <div class="stat-value" id="repActive">0</div>
                                 </div>
-                                <div class="stat-card">
+                                <div class="stat-card" style="cursor: default;">
                                     <div class="stat-title">Avg Days to Transfer</div>
                                     <div class="stat-value" id="repAvgDays">0</div>
                                 </div>
-                                <div class="stat-card">
+                                <div class="stat-card" onclick="filterRepDetails('gs')">
                                     <div class="stat-title">GS Conversion</div>
                                     <div class="stat-value" id="repConvGS">0%</div>
                                 </div>
-                                <div class="stat-card">
+                                <div class="stat-card" onclick="filterRepDetails('coe')">
                                     <div class="stat-title">COE Conversion</div>
                                     <div class="stat-value" id="repConvCOE">0%</div>
                                 </div>
-                                <div class="stat-card">
+                                <div class="stat-card" onclick="filterRepDetails('visa')">
                                     <div class="stat-title">Visa Conversion</div>
                                     <div class="stat-value" id="repConvVisa">0%</div>
                                 </div>
@@ -674,19 +674,19 @@
 
                     <div id="gsOverview" class="sub-section active" style="display:block;">
                         <div class="cards-grid">
-                            <div class="stat-card">
+                            <div class="stat-card" onclick="filterGSDetails('total')">
                                 <div class="stat-title">Total GS Cases</div>
                                 <div class="stat-value" id="gsTotal">0</div>
                             </div>
-                            <div class="stat-card">
+                            <div class="stat-card" onclick="filterGSDetails('offer')">
                                 <div class="stat-title">Pending Full Offer</div>
                                 <div class="stat-value" id="gsPendingOffer">0</div>
                             </div>
-                            <div class="stat-card">
+                            <div class="stat-card" onclick="filterGSDetails('coe')">
                                 <div class="stat-title">Pending COE</div>
                                 <div class="stat-value" id="gsPendingCOE">0</div>
                             </div>
-                            <div class="stat-card">
+                            <div class="stat-card" onclick="filterGSDetails('visa')">
                                 <div class="stat-title">Pending Visa</div>
                                 <div class="stat-value" id="gsPendingVisa">0</div>
                             </div>
@@ -750,6 +750,10 @@
                                 <input type="text" id="detailsSearch" placeholder="Search client, rep, status..."
                                     onkeyup="searchTable('detailsTable', this.value)">
                             </div>
+                            <button onclick="resetDetails()"
+                                style="margin-left:auto; padding:8px 16px; background:rgba(255,255,255,0.1); border:none; border-radius:8px; color:var(--text-secondary); cursor:pointer;">
+                                <i class="fa-solid fa-rotate-left"></i> Reset
+                            </button>
                         </div>
                         <div class="data-table-wrapper">
                             <table id="detailsTable">
@@ -829,15 +833,12 @@
            NAVIGATION
         ============================================ */
         function navTo(secId, el) {
-            // Update Nav
             document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-            el.classList.add('active');
+            if (el) el.classList.add('active');
 
-            // Update Section
             document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
             id(secId).classList.add('active');
 
-            // Update Title
             const titles = {
                 'sectionSales': 'Sales Overview',
                 'sectionGS': 'GS Performance',
@@ -847,11 +848,8 @@
         }
 
         function switchSubTab(tabId, el) {
-            // Toggle Buttons
             el.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
-
-            // Toggle Content
             const parent = el.closest('.section');
             parent.querySelectorAll('.sub-section').forEach(d => d.style.display = 'none');
             id(tabId).style.display = 'block';
@@ -872,12 +870,11 @@
                 flatList = [...(d.Sweta || []), ...(d.Anusha || []), ...(d.Kumkum || [])];
 
                 computeSalesOverview();
-                computeRepData(currentRep); // Initial Rep
+                computeRepData(currentRep);
                 computeGSOverview();
                 computeGSAlerts();
                 renderDetails(flatList);
 
-                // Remove Loader
                 id('loading-overlay').style.opacity = '0';
                 setTimeout(() => id('loading-overlay').remove(), 500);
 
@@ -903,18 +900,16 @@
             animateValue("valGS", gs);
             animateValue("valCOE", coe);
 
-            createChart("chartAssignedTrend", "bar", groupMonthly(flatList, "assigned date"), "#38bdf8");
-            createChart("chartAcceptedTrend", "bar", groupMonthly(flatList.filter(x => !x["reason if reverted"]), "assigned date"), "#34d399");
+            createChart("chartAssignedTrend", "bar", groupMonthly(flatList, "assigned date"), "#38bdf8", (label) => filterByMonth(label, 'assigned'));
+            createChart("chartAcceptedTrend", "bar", groupMonthly(flatList.filter(x => !x["reason if reverted"]), "assigned date"), "#34d399", (label) => filterByMonth(label, 'accepted'));
         }
 
         /* ============================================
            SALES REP LOGIC
         ============================================ */
         function switchRep(repName, el) {
-            // Update Buttons
             el.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
-
             currentRep = repName;
             computeRepData(repName);
         }
@@ -922,7 +917,6 @@
         function computeRepData(rep) {
             const list = flatList.filter(x => x.assignee?.toLowerCase().includes(rep.toLowerCase()));
 
-            // Cards
             const active = list.filter(x => !x["reason if reverted"] && !x["transferred to gs date"]).length;
             animateValue("repActive", active);
 
@@ -945,13 +939,12 @@
             id("repConvCOE").textContent = pct(coeCnt, assigned);
             id("repConvVisa").textContent = pct(visaCnt, assigned);
 
-            // Charts
-            createChart("repChartAssigned", "line", groupMonthly(list, "assigned date"), "#818cf8");
-            createChart("repChartGS", "line", groupMonthly(list, "transferred to gs date"), "#38bdf8");
-            createChart("repChartAccepted", "line", groupMonthly(list.filter(x => !x["reason if reverted"]), "assigned date"), "#34d399");
+            createChart("repChartAssigned", "line", groupMonthly(list, "assigned date"), "#818cf8", (l) => filterRepByMonth(l, 'assigned'));
+            createChart("repChartGS", "line", groupMonthly(list, "transferred to gs date"), "#38bdf8", (l) => filterRepByMonth(l, 'gs'));
+            createChart("repChartAccepted", "line", groupMonthly(list.filter(x => !x["reason if reverted"]), "assigned date"), "#34d399", (l) => filterRepByMonth(l, 'accepted'));
 
-            createDonut("repChartSources", groupSources(list));
-            createFunnel("repChartFunnel", [assigned, gsCnt, coeCnt, visaCnt]);
+            createDonut("repChartSources", groupSources(list), (l) => filterRepBySource(l));
+            createFunnel("repChartFunnel", [assigned, gsCnt, coeCnt, visaCnt], (idx) => filterRepByStage(idx));
         }
 
         /* ============================================
@@ -965,7 +958,7 @@
             animateValue("gsPendingCOE", gsList.filter(x => x["full offer date"] && !x["coe obtained date"]).length);
             animateValue("gsPendingVisa", gsList.filter(x => x["coe obtained date"] && !x["visa lodged date"]).length);
 
-            createChart("gsTransferTrend", "bar", groupMonthly(gsList, "transferred to gs date"), "#a78bfa");
+            createChart("gsTransferTrend", "bar", groupMonthly(gsList, "transferred to gs date"), "#a78bfa", (l) => filterGSByMonth(l));
             createAvgChart("avgOfferDays", gsList, "full offer date", "transferred to gs date", "#fbbf24");
             createAvgChart("avgCOEDays", gsList, "coe obtained date", "full offer date", "#f472b6");
             createAvgChart("avgVisaDays", gsList, "visa lodged date", "coe obtained date", "#34d399");
@@ -1013,7 +1006,6 @@
         function renderDetails(list) {
             const body = id("detailsTable").querySelector("tbody");
             body.innerHTML = "";
-            // Limit to 100 initially for performance if needed, but rendering all for now
             list.forEach(x => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
@@ -1036,20 +1028,114 @@
             });
         }
 
+        function resetDetails() {
+            renderDetails(flatList);
+            // Optionally clear search
+            id('detailsSearch').value = '';
+            searchTable('detailsTable', '');
+        }
+
         /* ============================================
-           INTERACTIONS
+           INTERACTIONS & FILTERING
         ============================================ */
         function filterDetails(type) {
-            // Switch to details tab
             navTo('sectionDetails', document.querySelectorAll('.nav-item')[2]);
-
             let filtered = [];
             if (type === 'assigned') filtered = flatList;
             if (type === 'accepted') filtered = flatList.filter(x => !x["reason if reverted"]);
             if (type === 'reverted') filtered = flatList.filter(x => x["reason if reverted"]);
             if (type === 'gs') filtered = flatList.filter(x => x["transferred to gs date"]);
             if (type === 'coe') filtered = flatList.filter(x => x["coe obtained date"]);
+            renderDetails(filtered);
+        }
 
+        function filterRepDetails(type) {
+            navTo('sectionDetails', document.querySelectorAll('.nav-item')[2]);
+            let list = flatList.filter(x => x.assignee?.toLowerCase().includes(currentRep.toLowerCase()));
+            let filtered = [];
+
+            if (type === 'active') filtered = list.filter(x => !x["reason if reverted"] && !x["transferred to gs date"]);
+            if (type === 'gs') filtered = list.filter(x => x["transferred to gs date"]);
+            if (type === 'coe') filtered = list.filter(x => x["coe obtained date"]);
+            if (type === 'visa') filtered = list.filter(x => x["visa lodged date"]);
+
+            renderDetails(filtered);
+        }
+
+        function filterGSDetails(type) {
+            navTo('sectionDetails', document.querySelectorAll('.nav-item')[2]);
+            let list = flatList.filter(x => x["transferred to gs date"]);
+            let filtered = [];
+
+            if (type === 'total') filtered = list;
+            if (type === 'offer') filtered = list.filter(x => !x["full offer date"]);
+            if (type === 'coe') filtered = list.filter(x => x["full offer date"] && !x["coe obtained date"]);
+            if (type === 'visa') filtered = list.filter(x => x["coe obtained date"] && !x["visa lodged date"]);
+
+            renderDetails(filtered);
+        }
+
+        // Chart Filters
+        function filterByMonth(label, type) {
+            navTo('sectionDetails', document.querySelectorAll('.nav-item')[2]);
+            // label format "Nov 24"
+            let filtered = flatList.filter(x => {
+                let d = parseDate(x["assigned date"]);
+                if (!d) return false;
+                let k = d.toLocaleString('default', { month: 'short' }) + " " + d.getFullYear().toString().substr(2);
+                if (k !== label) return false;
+
+                if (type === 'accepted') return !x["reason if reverted"];
+                return true;
+            });
+            renderDetails(filtered);
+        }
+
+        function filterRepByMonth(label, type) {
+            navTo('sectionDetails', document.querySelectorAll('.nav-item')[2]);
+            let list = flatList.filter(x => x.assignee?.toLowerCase().includes(currentRep.toLowerCase()));
+
+            let filtered = list.filter(x => {
+                let field = (type === 'gs') ? "transferred to gs date" : "assigned date";
+                let d = parseDate(x[field]);
+                if (!d) return false;
+                let k = d.toLocaleString('default', { month: 'short' }) + " " + d.getFullYear().toString().substr(2);
+                if (k !== label) return false;
+
+                if (type === 'accepted') return !x["reason if reverted"];
+                return true;
+            });
+            renderDetails(filtered);
+        }
+
+        function filterRepBySource(source) {
+            navTo('sectionDetails', document.querySelectorAll('.nav-item')[2]);
+            let list = flatList.filter(x => x.assignee?.toLowerCase().includes(currentRep.toLowerCase()));
+            let filtered = list.filter(x => (x["source"] || "Unknown").trim() === source);
+            renderDetails(filtered);
+        }
+
+        function filterRepByStage(index) {
+            navTo('sectionDetails', document.querySelectorAll('.nav-item')[2]);
+            let list = flatList.filter(x => x.assignee?.toLowerCase().includes(currentRep.toLowerCase()));
+            let filtered = [];
+            // 0: Assigned, 1: GS, 2: COE, 3: Visa
+            if (index === 0) filtered = list;
+            if (index === 1) filtered = list.filter(x => x["transferred to gs date"]);
+            if (index === 2) filtered = list.filter(x => x["coe obtained date"]);
+            if (index === 3) filtered = list.filter(x => x["visa lodged date"]);
+            renderDetails(filtered);
+        }
+
+        function filterGSByMonth(label) {
+            navTo('sectionDetails', document.querySelectorAll('.nav-item')[2]);
+            let list = flatList.filter(x => x["transferred to gs date"]);
+            let filtered = list.filter(x => {
+                let d = parseDate(x["transferred to gs date"]);
+                if (!d) return false;
+                let k = d.toLocaleString('default', { month: 'short' }) + " " + d.getFullYear().toString().substr(2);
+                return k === label;
+            });
             renderDetails(filtered);
         }
 
@@ -1083,10 +1169,9 @@
         ============================================ */
         let charts = {};
 
-        function createChart(canvasId, type, dataMap, color) {
+        function createChart(canvasId, type, dataMap, color, onClickFn) {
             const ctx = id(canvasId);
             if (!ctx) return;
-
             if (charts[canvasId]) charts[canvasId].destroy();
 
             charts[canvasId] = new Chart(ctx, {
@@ -1111,12 +1196,22 @@
                     scales: {
                         y: { grid: { color: 'rgba(255,255,255,0.05)' } },
                         x: { grid: { display: false } }
+                    },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0 && onClickFn) {
+                            const idx = elements[0].index;
+                            const label = Object.keys(dataMap)[idx];
+                            onClickFn(label);
+                        }
+                    },
+                    onHover: (event, chartElement) => {
+                        event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
                     }
                 }
             });
         }
 
-        function createDonut(canvasId, dataMap) {
+        function createDonut(canvasId, dataMap, onClickFn) {
             const ctx = id(canvasId);
             if (!ctx) return;
             if (charts[canvasId]) charts[canvasId].destroy();
@@ -1137,12 +1232,22 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     cutout: '70%',
-                    plugins: { legend: { position: 'right', labels: { color: '#94a3b8' } } }
+                    plugins: { legend: { position: 'right', labels: { color: '#94a3b8' } } },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0 && onClickFn) {
+                            const idx = elements[0].index;
+                            const label = Object.keys(dataMap)[idx];
+                            onClickFn(label);
+                        }
+                    },
+                    onHover: (event, chartElement) => {
+                        event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                    }
                 }
             });
         }
 
-        function createFunnel(canvasId, arr) {
+        function createFunnel(canvasId, arr, onClickFn) {
             const ctx = id(canvasId);
             if (!ctx) return;
             if (charts[canvasId]) charts[canvasId].destroy();
@@ -1162,7 +1267,16 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' } }, y: { grid: { display: false } } }
+                    scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' } }, y: { grid: { display: false } } },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0 && onClickFn) {
+                            const idx = elements[0].index;
+                            onClickFn(idx);
+                        }
+                    },
+                    onHover: (event, chartElement) => {
+                        event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                    }
                 }
             });
         }
